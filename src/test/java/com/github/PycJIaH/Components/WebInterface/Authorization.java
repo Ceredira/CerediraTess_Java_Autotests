@@ -1,4 +1,4 @@
-package com.github.PycJIaH;
+package com.github.PycJIaH.Components.WebInterface;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,8 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
