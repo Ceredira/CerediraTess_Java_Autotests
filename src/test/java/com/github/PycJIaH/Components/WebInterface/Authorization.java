@@ -21,7 +21,7 @@ public class Authorization {
         driver = new ChromeDriver();
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 
         try {
             //1. Перейти на страницу http://{url}:7801/
@@ -85,6 +85,43 @@ public class Authorization {
         } finally {
             driver.quit();
         }
+    }
+    @Test
+    @DisplayName("2. Ошибка входа. Неправильный пароль")
+    public void check_wrong_authorization() {
+        driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+
+        try {
+            //1. Перейти на страницу http://{url}:7801/
+            driver.get("http://192.168.242.128:7801/");
+            // Локатор поля "Логин"
+            WebElement login = driver.findElement(new By.ByXPath("//*[@id=\"username\"]"));
+            // Локатор поля "Пароль"
+            WebElement password = driver.findElement(new By.ByXPath("//*[@id=\"password\"]"));
+            // Локатор Кнопки "Войти"
+            WebElement submit = driver.findElement(new By.ByXPath("//*[@id=\"submit\"]"));
+            //2. В поле "Логин" вводим значение "admin"
+            login.sendKeys("admin");
+            //3. В поле "Пароль" вводим значение "1234"
+            password.sendKeys("1234");
+            //4. Нажать на кнопку "Войти"
+            submit.click();
+            //5. Появилось сообщение об ошибке "Invalid password"
+            String expectedErrorMessage = "Invalid password";
+            String actualErrorMessage = driver.findElement(new By.ByXPath("//form/div[2]/ul/li")).getText();
+            assertEquals(expectedErrorMessage, actualErrorMessage);
+            //6. Шапка страницы равна "Вход в систему"
+            String hatHomePage = "Вход в систему";
+            String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
+            assertEquals(hatHomePage, actualHatHomePage);
+
+        } finally {
+            driver.quit();
+        }
+
     }
 
     private void selectCheckBox(WebElement el, boolean isSelected) {
