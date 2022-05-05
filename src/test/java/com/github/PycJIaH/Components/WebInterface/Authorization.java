@@ -2,17 +2,11 @@ package com.github.PycJIaH.Components.WebInterface;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +78,7 @@ public class Authorization {
             //4.4. На странице есть кнопка "Обновить скрипты"
             assertTrue(updateScriptsButton.isDisplayed(), "Нет кнопки \"Обновить скрипты\"");
             //4.5. В главном меню есть пункт "admin - Выход"
-            assertTrue(adminExitButton.isDisplayed(),"Нет кнопки \"admin - Выход\"");
+            assertTrue(adminExitButton.isDisplayed(), "Нет кнопки \"admin - Выход\"");
             //5. Нажать на пункт меню "admin - Выход"
             adminExitButton.click();
 
@@ -92,6 +86,7 @@ public class Authorization {
             driver.quit();
         }
     }
+
     @Test
     @DisplayName("2. Ошибка входа. Неправильный пароль")
     public void check_wrong_password_authorization() {
@@ -129,6 +124,7 @@ public class Authorization {
         }
 
     }
+
     @Test
     @DisplayName("3. Ошибка входа. Пользователь не существует")
     public void check_wrong_login_authorization() {
@@ -166,6 +162,7 @@ public class Authorization {
         }
 
     }
+
     @Test
     @DisplayName("4. Ошибка входа. Параметр Логин пустой")
     public void check_login_empty_authorization() {
@@ -179,12 +176,12 @@ public class Authorization {
             driver.get("http://192.168.242.128:7801/");
             // Локатор Кнопки "Войти"
             WebElement submit = driver.findElement(new By.ByXPath("//*[@id=\"submit\"]"));
+            // Локатор поля тултипы "Заполнить это поле"
+            WebElement tooltip = driver.findElement(new By.ByXPath("//*[@id=\"username\"]"));
             //2. Нажать на кнопку "Войти"
             submit.click();
-            //3. Появилось сообщение об ошибке "Заполните это поле"
-            String expectedErrorMessage = "Заполните это поле";
-//            String actualErrorMessage = alert.getText();
-//            assertEquals(expectedErrorMessage, actualErrorMessage);
+            //3. Появилось сообщение об ошибке "Заполните это поле" - так как проверка текста не представляется возможным, данная проверка только на наличие тултипы "Заполните это поле"
+            assertTrue(isAttributePresent(tooltip, "required"), "Атрибут required у поля Логин отсуствует");
             //6. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
             String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
@@ -195,6 +192,7 @@ public class Authorization {
         }
 
     }
+
     @Test
     @DisplayName("5. Ошибка входа. Параметр Пароль пустой")
     public void check_password_empty_authorization() {
@@ -210,14 +208,14 @@ public class Authorization {
             WebElement login = driver.findElement(new By.ByXPath("//*[@id=\"username\"]"));
             // Локатор Кнопки "Войти"
             WebElement submit = driver.findElement(new By.ByXPath("//*[@id=\"submit\"]"));
+            // Локатор поля тултипы "Заполнить это поле"
+            WebElement tooltip = driver.findElement(new By.ByXPath("//*[@id=\"password\"]"));
             //2. В поле "Логин" вводим значение "admin"
             login.sendKeys("admin");
             //3. Нажать на кнопку "Войти"
             submit.click();
-            //4. Появилось сообщение об ошибке "Заполните это поле"
-            String expectedErrorMessage = "Заполните это поле";
-//            String actualErrorMessage = alert.getText();
-//            assertEquals(expectedErrorMessage, actualErrorMessage);
+            //4. Появилось сообщение об ошибке "Заполните это поле" - так как проверка текста не представляется возможным, данная проверка только на наличие тултипы "Заполните это поле"
+            assertTrue(isAttributePresent(tooltip, "required"), "Атрибут required у поля Пароль отсуствует");
             //6. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
             String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
@@ -228,6 +226,19 @@ public class Authorization {
         }
 
     }
+
+    private boolean isAttributePresent(WebElement element, String attribute) {
+        Boolean result = false;
+        try {
+            String value = element.getAttribute(attribute);
+            if (value != null) {
+                result = true;
+            }
+        } catch (Exception e) {
+        }
+        return result;
+    }
+
     private void selectCheckBox(WebElement el, boolean isSelected) {
         boolean check = el.isSelected();
         if (check != isSelected) {

@@ -65,5 +65,49 @@ public class Users {
         }
     }
 
+    @Test
+    @DisplayName("2. Создание нового пользователя")
+    public void createNewUser() {
+
+        try {
+            //1. Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement Administration = driver.findElement(new By.ByXPath("//*[@id=\"navbarDropdown\"]"));
+            //Локатор раздела "Пользователи":
+            WebElement Users = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]/ul/li[3]/div/a[4]"));
+            //2. В главном меню перейти в раздел "Администрирование -> Пользователи"
+            Administration.click();
+            Users.click();
+            //Локатор кнопки "Создать"
+            WebElement CreateButton = driver.findElement(new By.ByXPath("/html/body/div[1]/ul/li[2]/a"));
+            //3. Выбрать вкладку "Создать"
+            CreateButton.click();
+            //Локатор поля "Логин пользователя" в окне "Создать новую запись"
+            WebElement CreateNewLogin = driver.findElement(new By.ByXPath("//*[@id=\"username\"]"));
+            //Локатор поля "Пароль" в окне "Создать новую запись"
+            WebElement CreateNewPassword = driver.findElement(new By.ByXPath("//*[@id=\"password\"]"));
+            //Локатор кнопки "Сохранить" в окне "Создать новую запись"
+            WebElement SaveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/div/div/form/fieldset/div[2]/input"));
+            //4.Ввести обязательные поля:
+            //4.1. В поле "Логин пользователя" ввести значение "test"
+            CreateNewLogin.sendKeys("test");
+            //4.2. В поле "Пароль" ввести значение "test"
+            CreateNewPassword.sendKeys("test");
+            //Временная строка удалить:
+            driver.findElement(new By.ByXPath("//*[@id=\"fs_uniquifier\"]")).sendKeys("test");
+            //5. Нажать на кнопку "Сохранить"
+            SaveButton.click();
+            //6. В таблице "Список" отображается строка со значением "test" в столбце "Логин пользователя":
+            String expectedUserName = "test";
+            String actualUserName = driver.findElement(new By.ByXPath("/html/body/div[1]/div[2]/table/tbody/tr[2]/td[3]")).getText();
+            assertEquals(expectedUserName, actualUserName);
+
+
+        } finally {
+            driver.quit();
+        }
+    }
+
 
 }
