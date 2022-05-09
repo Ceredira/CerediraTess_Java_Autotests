@@ -9,10 +9,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Users {
     WebDriver driver;
@@ -73,8 +73,8 @@ public class Users {
             //5. Нажать на кнопку "Сохранить"
             SaveButton.click();
             //6. В таблице "Список" отображается строка со значением "test" в столбце "Логин пользователя":
-            String expectedUserName = "test";
-            String actualUserName = driver.findElement(new By.ByXPath("/html/body/div[1]/div[2]/table/tbody/tr[2]/td[3]")).getText();
+            String expectedUserName = username;
+            String actualUserName = driver.findElement(new By.ByXPath("//td[3][normalize-space()='" + username + "']")).getText();
             assertEquals(expectedUserName, actualUserName);
 
         } finally {
@@ -129,7 +129,7 @@ public class Users {
         try {
             //1. Войти на сайт с пользователем "admin"
             permanentAuthorization();
-            String username = "test" + new Random().ints(2000,3000).findFirst().getAsInt();
+            String username = "test" + new Random().ints(2000, 3000).findFirst().getAsInt();
             //2. Создать пользователя "user"
             createNewUser(username);
             //Локатор кнопки "Удалить запись"
@@ -141,14 +141,24 @@ public class Users {
             //5. Нажать на кнопку "ОК"
             ConfirmDelete.accept();
             //6. В таблице "Список" отсутствует строка со значением "user" в столбце "Логин пользователя"
-
-
-
+            assertTrue(isElementPresent(username), "Пользователь не удалён");
 
         } finally {
-            ;
+            driver.quit();
         }
+
+
     }
 
-
+    private boolean isElementPresent(String element) {
+        Boolean result = false;
+        try {
+             if (element != null) {
+                result = true;
+            }
+        } catch (Exception e) {
+        }
+        return result;
+    }
 }
+
