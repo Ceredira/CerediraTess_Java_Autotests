@@ -129,8 +129,8 @@ public class Users {
         try {
             //1. Войти на сайт с пользователем "admin"
             permanentAuthorization();
-            String username = "test" + new Random().ints(2000, 3000).findFirst().getAsInt();
             //2. Создать пользователя "user"
+            String username = "test" + new Random().ints(2000, 3000).findFirst().getAsInt();
             createNewUser(username);
             //Локатор кнопки "Удалить запись"
             WebElement DeleteUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + username + "']/..//button[@title='Delete record']"));
@@ -150,10 +150,42 @@ public class Users {
 
     }
 
+    @Test
+    @DisplayName("4. Изменение записи пользователя, изменение поля \"Логин пользователя\"")
+    public void changeLoginUser() {
+
+        try {
+            //1. Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //2. Создать пользователя "user"
+            String username = "user" + new Random().ints(2000, 3000).findFirst().getAsInt();
+            createNewUser(username);
+            //Локатор кнопки "Редактировать запись"
+            WebElement EditUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + username + "']/..//a[@title='Редактировать запись']"));
+            //3. Нажать на иконку "Редактировать запись" пользователя с логином "user"
+            EditUserButton.click();
+            //Локатор поля "Логин пользователя"
+            WebElement LoginUserEdit = driver.findElement(new By.ByXPath("//*[@id=\"username\"]"));
+            //4. Ввести в поле "Логин пользователя" значение "user2"
+            LoginUserEdit.clear(); //Очистить поле Логина
+            String editedusername = "user" + new Random().ints(3000, 4000).findFirst().getAsInt();
+            LoginUserEdit.sendKeys(editedusername);
+            //Локатор кнопки "Сохранить"
+            WebElement SaveButtonEdit = driver.findElement(new By.ByXPath("//input[@type='submit']"));
+            //5. Нажать на кнопку "Сохранить"
+            SaveButtonEdit.click();
+            //6. В таблице "Список" присутствует строка со значением "user2" в столбце "Логин пользователя"
+            assertTrue(driver.findElement(new By.ByXPath("//td[3][normalize-space()='" + editedusername + "']")).isDisplayed());
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private boolean isElementPresent(String element) {
         Boolean result = false;
         try {
-             if (element != null) {
+            if (element != null) {
                 result = true;
             }
         } catch (Exception e) {
