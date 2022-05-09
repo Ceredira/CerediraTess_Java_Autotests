@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.NoSuchElementException;
@@ -47,14 +48,14 @@ public class Users {
 
         try {
             //Локатор раздела "Администрирование":
-            WebElement Administration = driver.findElement(new By.ByXPath("//*[@id=\"navbarDropdown\"]"));
+            WebElement Administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
             //Локатор раздела "Пользователи":
-            WebElement Users = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]/ul/li[3]/div/a[4]"));
+            WebElement Users = driver.findElement(new By.ByXPath("//a[text()='Пользователи']"));
             //2. В главном меню перейти в раздел "Администрирование -> Пользователи"
             Administration.click();
             Users.click();
             //Локатор кнопки "Создать"
-            WebElement CreateButton = driver.findElement(new By.ByXPath("/html/body/div[1]/ul/li[2]/a"));
+            WebElement CreateButton = driver.findElement(new By.ByXPath("//a[normalize-space()='Создать']"));
             //3. Выбрать вкладку "Создать"
             CreateButton.click();
             //Локатор поля "Логин пользователя" в окне "Создать новую запись"
@@ -62,7 +63,7 @@ public class Users {
             //Локатор поля "Пароль" в окне "Создать новую запись"
             WebElement CreateNewPassword = driver.findElement(new By.ByXPath("//*[@id=\"password\"]"));
             //Локатор кнопки "Сохранить" в окне "Создать новую запись"
-            WebElement SaveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/div/div/form/fieldset/div[2]/input"));
+            WebElement SaveButton = driver.findElement(new By.ByXPath("//input[@type='submit']"));
             //4.Ввести обязательные поля:
             //4.1. В поле "Логин пользователя" ввести значение "test"
             CreateNewLogin.sendKeys(username);
@@ -90,15 +91,15 @@ public class Users {
             //1. Войти на сайт с пользователем "admin"
             permanentAuthorization();
             //Локатор раздела "Администрирование":
-            WebElement Administration = driver.findElement(new By.ByXPath("//*[@id=\"navbarDropdown\"]"));
+            WebElement Administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
             //Локатор раздела "Пользователи":
-            WebElement Users = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]/ul/li[3]/div/a[4]"));
+            WebElement Users = driver.findElement(new By.ByXPath("//a[text()='Пользователи']"));
             //2. В главном меню перейти в раздел "Администрирование -> Пользователи"
             Administration.click();
             Users.click();
             //3. В списке есть 1 запись, где "Логин пользователя" равен "admin"
             String expectedUserName = "admin";
-            String actualUserName = driver.findElement(new By.ByXPath("/html/body/div[1]/div[1]/table/tbody/tr/td[3]")).getText();
+            String actualUserName = driver.findElement(new By.ByXPath("//tbody/tr/td[3]")).getText();
             assertEquals(expectedUserName, actualUserName);
 
 
@@ -146,8 +147,6 @@ public class Users {
         } finally {
             driver.quit();
         }
-
-
     }
 
     @Test
@@ -175,11 +174,98 @@ public class Users {
             //5. Нажать на кнопку "Сохранить"
             SaveButtonEdit.click();
             //6. В таблице "Список" присутствует строка со значением "user2" в столбце "Логин пользователя"
-            assertTrue(driver.findElement(new By.ByXPath("//td[3][normalize-space()='" + editedusername + "']")).isDisplayed());
+            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedusername + "']")).isDisplayed(), "Отсутствует изменённый пользователь в списке");
 
         } finally {
             driver.quit();
         }
+    }
+
+    @Test
+    @DisplayName("5. Просмотр записи пользователя")
+    public void checkViewadmin() {
+
+        try {
+            //1. Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement Administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор раздела "Пользователи":
+            WebElement Users = driver.findElement(new By.ByXPath("//a[text()='Пользователи']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Пользователи"
+            Administration.click();
+            Users.click();
+            //Локатор кнопки "Просмотр записи"
+            WebElement ViewUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Просмотр записи']"));
+            //3. Нажать на иконку "Просмотр записи" пользователя с логином "admin"
+            ViewUserButton.click();
+            // Ждем появления формы
+            WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait1.until(webDriver -> driver.findElement(new By.ByXPath("//h3[contains(text(), 'Просмотр записи')]")).isDisplayed());
+            //4. Отобразились следующие поля и значения:
+            //Локатор значения поля Логина пользователя:
+            WebElement LoginValue = driver.findElement(new By.ByXPath("//table//b[text()='Логин пользователя']/../../td[2]"));
+            //Локатор значения поля Блокировки:
+            WebElement BlockStatus = driver.findElement(new By.ByXPath("//table//b[text()='Блокировка']/../../td[2]"));
+            //Локатор значения поля Почты:
+            WebElement EmailValue = driver.findElement(new By.ByXPath("//table//b[text()='Почта']/../../td[2]"));
+            //Локатор значения Даты создания:
+            WebElement CreateDate = driver.findElement(new By.ByXPath("//table//b[text()='Дата создания']/../../td[2]"));
+            //Локатор значения Даты последнего обновления:
+            WebElement LastUpdateDate = driver.findElement(new By.ByXPath("//table//b[text()='Последнее обновление']/../../td[2]"));
+            //Локатор значения Роли
+            WebElement RoleValue = driver.findElement(new By.ByXPath("//table//b[text()='Роли']/../../td[2]"));
+            //4.1. Логин пользователя: admin
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Логин пользователя']")).isDisplayed(), "Поле \"Логин пользователя\" отсутствует");
+            assertTrue(LoginValue.isDisplayed(), "Значение логина отсутствует");
+            String expectedLoginValue = "admin";
+            String actualLoginValue = LoginValue.getText();
+            assertEquals(expectedLoginValue, actualLoginValue);
+            //4.2. Блокировка: True
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Блокировка']")).isDisplayed(), "Поле \"Блокировка\" отсутствует");
+            assertTrue(BlockStatus.isDisplayed(), "Значение блокировки отсутствует");
+            String expectedBlockStatus = "True";
+            String actualBlockStatus = BlockStatus.getText();
+            assertEquals(expectedBlockStatus, actualBlockStatus);
+            //4.3. Почта: admin@admin.ru
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Почта']")).isDisplayed(), "Поле \"Почта\" отсутствует");
+            assertTrue(EmailValue.isDisplayed(), "Значение почты отсутствует");
+            String expectedEmailValue = "admin@admin.ru";
+            String actualEmailValue = EmailValue.getText();
+            assertEquals(expectedEmailValue, actualEmailValue);
+            //4.4. Имя пользователя:
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Имя пользователя']")).isDisplayed(), "Поле \"Имя пользователя\" отсутствует");
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Имя пользователя']/../../td[2]")).isDisplayed(), "Значение имени отсутствует");
+            //4.5. Дата создания: yyyy-mm-dd hh:tt:ss.ms
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Дата создания']")).isDisplayed(), "Поле \"Дата создания\" отсутствует");
+            assertTrue(CreateDate.isDisplayed(), "Значение даты создания отсутствует");
+            String expectedCreateDate = "2022-04-19 12:59:24.083932";
+            String actualCreateDate = CreateDate.getText();
+            assertEquals(expectedCreateDate, actualCreateDate);
+            //4.6. Последнее обновление: yyyy-mm-dd hh:tt:ss.ms
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Последнее обновление']")).isDisplayed(), "Поле \"Последнее обновление\" отсутствует");
+            assertTrue(LastUpdateDate.isDisplayed(), "Значение даты последнего обновления отсутствует");
+            String expectedLastUpdateDate = "2022-04-19 12:59:24.083932";
+            String actualLastUpdateDate = LastUpdateDate.getText();
+            assertEquals(expectedLastUpdateDate, actualLastUpdateDate);
+            //4.7. Роли: admin
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Роли']")).isDisplayed(), "Поле \"Роли\" отсутствует");
+            assertTrue(RoleValue.isDisplayed(), "Значение Роли отсутствует");
+            String expectedRoleValue = "admin";
+            String actualRoleValue = RoleValue.getText();
+            assertEquals(expectedRoleValue, actualRoleValue);
+            //4.8. Последний вход - Поле отсутствует в данном релизе программы
+            //4.9. Текущий вход - Поле отсутствует в данном релизе программы
+            //4.10. Последний адрес входа - Поле отсутствует в данном релизе программы
+            //4.11. Текущий адрес входа - Поле отсутствует в данном релизе программы
+            //4.12. Количество входов - Поле отсутствует в данном релизе программы
+            //4.13. Дата подтверждения УЗ - Поле отсутствует в данном релизе программы
+
+        } finally {
+            driver.quit();
+        }
+
+
     }
 
     private boolean isElementPresent(String element) {
