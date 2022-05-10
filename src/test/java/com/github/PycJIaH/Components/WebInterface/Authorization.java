@@ -40,7 +40,7 @@ public class Authorization {
             assertEquals(actualTitle, expectedTitle);
             //1.2. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
-            String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
+            String actualHatHomePage = driver.findElement(new By.ByXPath("//b[text()='Вход в систему']")).getText();
             assertEquals(hatHomePage, actualHatHomePage);
             //1.3. Есть поле "Логин"
             assertTrue(login.isDisplayed(), "Поле \"Логин\" отсутствует");
@@ -59,13 +59,13 @@ public class Authorization {
 
             //Следующая страница:
             //Локатор "Выполнение запросов"
-            WebElement performingRequests = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]/ul/li[1]/a"));
+            WebElement performingRequests = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='Выполнение запросов']"));
             //Локатор "Блокировка агентов"
-            WebElement blockAgents = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]/ul/li[2]/a"));
+            WebElement blockAgents = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='Блокировка агентов']"));
             //Локатор кнопки "Обовить скрипты"
             WebElement updateScriptsButton = driver.findElement(new By.ByXPath("//*[@id=\"updateCT\"]"));
             //Локатор кнопки "admin - Выход"
-            WebElement adminExitButton = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]/div/a"));
+            WebElement adminExitButton = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='admin - Выход']"));
 
             //4.1. В главном меню есть пункт "Выполнение запросов"
             assertTrue(performingRequests.isDisplayed(), "Нет пункта \"Выполнение запросов\"");
@@ -112,11 +112,11 @@ public class Authorization {
             submit.click();
             //5. Появилось сообщение об ошибке "Invalid password"
             String expectedErrorMessage = "Invalid password";
-            String actualErrorMessage = driver.findElement(new By.ByXPath("//form/div[2]/ul/li")).getText();
+            String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Invalid password']")).getText();
             assertEquals(expectedErrorMessage, actualErrorMessage);
             //6. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
-            String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
+            String actualHatHomePage = driver.findElement(new By.ByXPath("//b[text()='Вход в систему']")).getText();
             assertEquals(hatHomePage, actualHatHomePage);
 
         } finally {
@@ -150,11 +150,11 @@ public class Authorization {
             submit.click();
             //5. Появилось сообщение об ошибке "Specified user does not exist"
             String expectedErrorMessage = "Specified user does not exist";
-            String actualErrorMessage = driver.findElement(new By.ByXPath("/html/body/div[1]/div[2]/div[2]/form/div[1]/ul/li")).getText();
+            String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Specified user does not exist']")).getText();
             assertEquals(expectedErrorMessage, actualErrorMessage);
             //6. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
-            String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
+            String actualHatHomePage = driver.findElement(new By.ByXPath("//b[text()='Вход в систему']")).getText();
             assertEquals(hatHomePage, actualHatHomePage);
 
         } finally {
@@ -184,7 +184,7 @@ public class Authorization {
             assertTrue(isAttributePresent(tooltip, "required"), "Атрибут required у поля Логин отсуствует");
             //6. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
-            String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
+            String actualHatHomePage = driver.findElement(new By.ByXPath("//b[text()='Вход в систему']")).getText();
             assertEquals(hatHomePage, actualHatHomePage);
 
         } finally {
@@ -218,7 +218,7 @@ public class Authorization {
             assertTrue(isAttributePresent(tooltip, "required"), "Атрибут required у поля Пароль отсуствует");
             //6. Шапка страницы равна "Вход в систему"
             String hatHomePage = "Вход в систему";
-            String actualHatHomePage = driver.findElement(new By.ByXPath("//div[1]/h4/b")).getText();
+            String actualHatHomePage = driver.findElement(new By.ByXPath("//b[text()='Вход в систему']")).getText();
             assertEquals(hatHomePage, actualHatHomePage);
 
         } finally {
