@@ -2,13 +2,11 @@ package com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.xml.xpath.XPath;
 import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -135,6 +133,8 @@ public class Users {
             createNewUser(username);
             //Локатор кнопки "Удалить запись"
             WebElement DeleteUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + username + "']/..//button[@title='Delete record']"));
+            //Локатор имени пользователя вновь созданного
+            WebElement UsernameForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + username + "']"));
             //3. Нажать на иконку корзины "Удалить запись" пользователя с логином "user"
             DeleteUserButton.click();
             //4. Появилось модальное диалоговое окно с текстом "Вы уверены что хотите удалить эту запись?"
@@ -142,7 +142,7 @@ public class Users {
             //5. Нажать на кнопку "ОК"
             ConfirmDelete.accept();
             //6. В таблице "Список" отсутствует строка со значением "user" в столбце "Логин пользователя"
-            assertTrue(isElementPresent(username), "Пользователь не удалён");
+            assertFalse(isElementExists(UsernameForDelete), "Пользователь не удалён");
 
         } finally {
             driver.quit();
@@ -264,19 +264,50 @@ public class Users {
         } finally {
             driver.quit();
         }
-
-
     }
 
-    private boolean isElementPresent(String element) {
-        Boolean result = false;
+    @Test
+    @DisplayName("6. Удаление записи пользователя через выбор")
+    public void removeUserAccountChoice() {
+
         try {
-            if (element != null) {
-                result = true;
-            }
-        } catch (Exception e) {
+            //1. Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //2. Создать пользователя "user"
+            String username = "user" + new Random().ints(4000, 5000).findFirst().getAsInt();
+            createNewUser(username);
+            //Локатор имени пользователя вновь созданного
+            WebElement UsernameForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + username + "']"));
+            //Локатор чекбокса в таблице пользователей+
+            WebElement CheckBoxTable = driver.findElement(new By.ByXPath("//td[normalize-space()='" + username + "']/..//input[@type='checkbox']"));
+            //3. Нажать на чекбокс слева пользователя "user"
+            CheckBoxTable.click();
+            //Локатор вкладки "С выбранным"
+            WebElement WithSelected = driver.findElement(new By.ByXPath("//a[text()='С выбранным']"));
+            //4. Перейти во вкладку "С выбранным"
+            WithSelected.click();
+            //Локатор пункта меню "Удалить"
+            WebElement DeleteUserButton = driver.findElement(new By.ByXPath("//a[text()='Удалить']"));
+            //5. Выбрать пункт из меню "Удалить"
+            DeleteUserButton.click();
+            //6. Появилось модальное диалоговое окно с текстом "Вы уверены что хотите удалить ?"
+            Alert ConfirmDelete = driver.switchTo().alert();
+            //7. Нажать на "ОК"
+            ConfirmDelete.accept();
+            //8. В списке отсутствует строка со значением "user" в столбце "Логин пользователя"
+            assertFalse(isElementExists(UsernameForDelete), "Пользователь не удален");
+        } finally {
+            driver.quit();
         }
-        return result;
+    }
+
+    private boolean isElementExists(WebElement el1) {
+        try {
+            el1.isDisplayed();
+            return true;
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+        }
+        return false;
     }
 }
 
