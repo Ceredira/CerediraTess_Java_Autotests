@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.nio.file.WatchEvent;
 import java.time.Duration;
@@ -129,7 +130,7 @@ public class Roles {
 
     @Test
     @DisplayName("4. Изменение роли, изменение поля Имя роли")
-    public void editCreatedRole() {
+    public void editNameCreatedRole() {
 
         try {
             //1.Войти на сайт с пользователем "admin"
@@ -153,6 +154,162 @@ public class Roles {
             saveButton.click();
             //6. В таблице "Список" отображается строка со значением "tester_4_2" в столбце "Название роли"
             assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedTesterName + "']")).isDisplayed(), "Отсутствует изменённый пользователь в списке");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("5. Изменение роли, изменение поля Описание")
+    public void editDescriptionCreatedRole() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //2. Создать роль "tester_3"
+            String testerName = "tester_" + new Random().ints(401, 500).findFirst().getAsInt();
+            String editedDescription = "Описание роли" + new Random().ints(301, 400).findFirst().getAsInt();
+            createRole(testerName);
+            //Локатор кнопки "Редактировать запись"
+            WebElement editUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']/..//a[@title='Редактировать запись']"));
+            //3. Нажать на иконку "Редактировать запись" роли с названием "tester_4_1"
+            editUserButton.click();
+            //Локатор поля "Описание"
+            WebElement descriptionField = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            //4. Ввести в поле "Описание" значение "Описание роли"
+            descriptionField.clear();
+            descriptionField.sendKeys(editedDescription);
+            //5. Нажать на кнопку "Сохранить"
+            saveButton.click();
+            //6. В таблице "Список" отображается строка со значением "tester_4_2" в столбце "Название роли"
+            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedDescription + "']")).isDisplayed(), "Отсутствует изменённое описание роли в списке");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("6. Просмотр роли")
+    public void checkViewRoleAdmin() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор вкладки "Роли":
+            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            administration.click();
+            roles.click();
+            //Локатор кнопки "Просмотр записи"
+            WebElement ViewUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Просмотр записи']"));
+            //3. Нажать на иконку "Просмотр записи" пользователя с логином "admin"
+            ViewUserButton.click();
+            // Ждем появления формы
+            WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait1.until(webDriver -> driver.findElement(new By.ByXPath("//h3[contains(text(), 'Просмотр записи')]")).isDisplayed());
+            //Локатор значения поля "Название роли":
+            WebElement roleNameValue = driver.findElement(new By.ByXPath("//table//b[text()='Название роли']/../../td[2]"));
+            //Локатор значения поля "Описание":
+            WebElement descriptionValue = driver.findElement(new By.ByXPath("//table//b[text()='Описание']/../../td[2]"));
+            //4. В поле "Название роли" присутствует значение "admin"
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Название роли']")).isDisplayed(), "Поле \"Название роли\" отсутствует");
+            assertTrue(roleNameValue.isDisplayed(), "Значение поля \"Название роли\" отсутствует");
+            String expectedRoleNameValue = "admin";
+            String actualRoleNameValue = roleNameValue.getText();
+            assertEquals(expectedRoleNameValue, actualRoleNameValue);
+            //5. В поле "Описание" отсутствует значение
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Описание']")).isDisplayed(), "Поле \"Описание\" отсутствует");
+            assertTrue(descriptionValue.getText().isEmpty(), "В поле \"Описание\" присутствует значение ");
+            //6. В поле "Агенты" присутствует значение "CerediraTess" - Поле отсутствует в данном релизе программы
+            //7. В поле "Пользователи" присутствует значение "admin" - Поле отсутствует в данном релизе программы
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("7. Дублирование записи роли, позитивный сценарий (1 способ)")
+    public void duplicateRoleEntryFirstWay() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор вкладки "Роли":
+            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            administration.click();
+            roles.click();
+            //Локатор кнопки "Дублировать запись"
+            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
+            //3.Нажать на иконку "Дублировать запись" роли с названием "admin"
+            duplicateRowButton.click();
+            //Локатор поля "Название роли"
+            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить']"));
+            //4. Ввести в поле "Название роли" значение "admin_7"
+            String adminName = "admin_" + new Random().ints(1, 100).findFirst().getAsInt();
+            nameRoleField.clear();
+            nameRoleField.sendKeys(adminName);
+            //5. Нажать на кнопку "Сохранить"
+            saveButton.click();
+            //6. В таблице "Список" отображается строка со значением "admin_7" в столбце "Название роли"
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + adminName + "']")).isDisplayed());
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("8. Дублирование записи роли, позитивный сценарий (2 способ)")
+    public void duplicateRoleEntrySecondWay() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор вкладки "Роли":
+            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            administration.click();
+            roles.click();
+            //Локатор кнопки "Дублировать запись"
+            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
+            //3.Нажать на иконку "Дублировать запись" роли с названием "admin"
+            duplicateRowButton.click();
+            //Локатор поля "Название роли"
+            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить и добавить новый объект"
+            WebElement saveAndAddButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить и добавить новый объект']"));
+            //4. Ввести в поле "Название роли" значение "admin_7"
+            String adminName = "admin_" + new Random().ints(101, 200).findFirst().getAsInt();
+            nameRoleField.clear();
+            nameRoleField.sendKeys(adminName);
+            //5. Нажать на кнопку "Сохранить и добавить новый объект"
+            saveAndAddButton.click();
+            //6. Текущая страница ${url}:7801/admin/Role/duplicate/?id=${id дублируемой роли}
+            assertEquals(driver.getCurrentUrl(), "http://192.168.242.128:7801/admin/Role/duplicate/?id=1");
+            //7. В строке "Название роли" осталось прежнее название "admin"
+            String expectedNameRoleField = "admin";
+            String actualNameRoleField = driver.findElement(new By.ByXPath("//input[@value='admin']")).getAttribute("value");
+            assertEquals(expectedNameRoleField, actualNameRoleField);
+            //Локатор вкладки "Список"
+            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
+            //8. Перейти во вкладку "Список"
+            listRole.click();
+            //9. В таблице "Список" отображается строка со значением "admin_8" в столбце "Название роли"
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + adminName + "']")).isDisplayed());
 
         } finally {
             driver.quit();
