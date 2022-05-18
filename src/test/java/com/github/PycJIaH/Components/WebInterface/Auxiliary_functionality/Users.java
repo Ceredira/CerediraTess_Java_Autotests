@@ -77,7 +77,7 @@ public class Users {
             assertEquals(expectedUserName, actualUserName);
 
         } finally {
-            ;
+
         }
     }
 
