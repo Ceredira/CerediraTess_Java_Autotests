@@ -51,7 +51,48 @@ public class Roles {
 
         try {
             permanentAuthorization();
-            createRole("tester_" + new Random().ints(1, 100).findFirst().getAsInt());
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор вкладки "Роли":
+            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            administration.click();
+            roles.click();
+            //Локатор кнопки "Создать"
+            WebElement createButton = driver.findElement(new By.ByXPath("//a[normalize-space()='Создать']"));
+            //3. Нажать на вкладку "Создать"
+            createButton.click();
+            //Локатор поля "Агенты"
+            WebElement agentField = driver.findElement(new By.ByXPath("//*[@id=\"s2id_agents\"]/ul"));
+            //Локатор поля "Пользователи"
+            WebElement usersField = driver.findElement(new By.ByXPath("//*[@id=\"s2id_users\"]/ul"));
+            //Локатор поля "Название роли"
+            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор поля "Описание"
+            WebElement descriptionField = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            //4.В поле "Агенты"...
+            agentField.click();
+            //Локатор выпадающего элемента "CerediraTess"
+            WebElement dropDownElement = driver.findElement(new By.ByXPath("//*[contains(@id,\"select2-result-label-\") and text()='CerediraTess']"));
+            //4. ...выбрать значение "CerediraTess"
+            dropDownElement.click();
+            //5. В поле "Пользователи"...
+            usersField.click();
+            //Локатор значения "admin" в поле Пользователи
+            WebElement adminChoice = driver.findElement(new By.ByXPath("//*[contains(@id,\"select2-result-label-\") and text()='admin']"));
+            //5. ...выбрать значение "admin"
+            adminChoice.click();
+            //6. В поле "Название роли" ввести значение "tester_2"
+            String testerName = "tester_" + new Random().ints(0, 100).findFirst().getAsInt();
+            nameRoleField.sendKeys(testerName);
+            //7. В поле "Описание" ввести значение "Тестирует систему"
+            descriptionField.sendKeys("Тестирует систему");
+            //8. Нажать на кнопку "Сохранить"
+            saveButton.click();
+            //9. В таблице "Список" отображается строка со значением "tester_2" в столбце "Название роли"
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + testerName + "']")).isDisplayed());
 
         } finally {
             driver.quit();
@@ -80,6 +121,38 @@ public class Roles {
             ConfirmDelete.accept();
             //6. В таблице "Список" отсутствует строка со значением "tester_3" в столбце "Название роли"
             assertFalse(isElementExists(rolenameForDelete), "Пользователь не удален");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("4. Изменение роли, изменение поля Имя роли")
+    public void editCreatedRole() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //2. Создать роль "tester_3"
+            String testerName = "tester_" + new Random().ints(201, 300).findFirst().getAsInt();
+            String editedTesterName = "tester_" + new Random().ints(301, 400).findFirst().getAsInt();
+            createRole(testerName);
+            //Локатор кнопки "Редактировать запись"
+            WebElement editUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']/..//a[@title='Редактировать запись']"));
+            //3. Нажать на иконку "Редактировать запись" роли с названием "tester_4_1"
+            editUserButton.click();
+            //Локатор поля "Название роли"
+            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            //4. Ввести в поле "Название роли" значение "tester_4_2"
+            nameRoleField.clear();
+            nameRoleField.sendKeys(editedTesterName);
+            //5. Нажать на кнопку "Сохранить"
+            saveButton.click();
+            //6. В таблице "Список" отображается строка со значением "tester_4_2" в столбце "Название роли"
+            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedTesterName + "']")).isDisplayed(), "Отсутствует изменённый пользователь в списке");
 
         } finally {
             driver.quit();
@@ -127,35 +200,15 @@ public class Roles {
             WebElement createButton = driver.findElement(new By.ByXPath("//a[normalize-space()='Создать']"));
             //3. Нажать на вкладку "Создать"
             createButton.click();
-            //Локатор поля "Агенты"
-            WebElement agentField = driver.findElement(new By.ByXPath("//*[@id=\"s2id_agents\"]/ul"));
-            //Локатор поля "Пользователи"
-            WebElement usersField = driver.findElement(new By.ByXPath("//*[@id=\"s2id_users\"]/ul"));
             //Локатор поля "Название роли"
             WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
-            //Локатор поля "Описание"
-            WebElement descriptionField = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
             //Локатор кнопки "Сохранить"
             WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
-            //4.В поле "Агенты"...
-            agentField.click();
-            //Локатор выпадающего элемента "CerediraTess"
-            WebElement dropDownElement = driver.findElement(new By.ByXPath("//*[contains(@id,\"select2-result-label-\") and text()='CerediraTess']"));
-            //4. ...выбрать значение "CerediraTess"
-            dropDownElement.click();
-            //5. В поле "Пользователи"...
-            usersField.click();
-            //Локатор значения "admin" в поле Пользователи
-            WebElement adminChoice = driver.findElement(new By.ByXPath("//*[contains(@id,\"select2-result-label-\") and text()='admin']"));
-            //5. ...выбрать значение "admin"
-            adminChoice.click();
-            //6. В поле "Название роли" ввести значение "tester_2"
+            //4. В поле "Название роли" ввести значение "${userrole}"
             nameRoleField.sendKeys(testerName);
-            //7. В поле "Описание" ввести значение "Тестирует систему"
-            descriptionField.sendKeys("Тестирует систему");
-            //8. Нажать на кнопку "Сохранить"
+            //5. Нажать на кнопку "Сохранить"
             saveButton.click();
-            //9. В таблице "Список" отображается строка со значением "tester_2" в столбце "Название роли"
+            //6. В таблице "Список" отображается строка со значением "${userrole}" в столбце "Название роли"
             assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + testerName + "']")).isDisplayed());
 
         } finally {
