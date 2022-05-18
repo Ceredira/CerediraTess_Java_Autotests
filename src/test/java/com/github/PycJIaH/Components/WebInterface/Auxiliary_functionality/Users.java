@@ -114,7 +114,7 @@ public class Users {
             //1. Войти на сайт с пользователем "admin"
             permanentAuthorization();
             //Создание пользователя:
-            createNewUser("test");
+            createNewUser("test" + new Random().ints(1, 100).findFirst().getAsInt());
 
         } finally {
             driver.quit();
