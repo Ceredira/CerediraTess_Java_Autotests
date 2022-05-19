@@ -360,6 +360,44 @@ public class Roles {
         }
     }
 
+    @Test
+    @DisplayName("10. Дублирование записи роли, негативный сценарий")
+    public void duplicateRoleEntryNegativeWay() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор вкладки "Роли":
+            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            administration.click();
+            roles.click();
+            //Локатор кнопки "Дублировать запись"
+            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
+            //3.Нажать на иконку "Дублировать запись" роли с названием "admin"
+            duplicateRowButton.click();
+            //Локатор поля "Название роли"
+            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить']"));
+            //4. Ввести в поле "Название роли" значение "admin"
+            nameRoleField.clear();
+            nameRoleField.sendKeys("admin");
+            //5. Нажать на кнопку "Сохранить"
+            saveButton.click();
+            //6. Дубликат роли "admin" не создался
+            //Локатор ошибки целостности
+            WebElement errorMessage = driver.findElement(new By.ByXPath("//div[@class=\"alert alert-danger alert-dismissable\" and contains(string(), \"Ошибка целостности.\")]"));
+            //7. Под основным меню появилось сообщение "Ошибка целостности."
+            assertTrue(errorMessage.isDisplayed());
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
