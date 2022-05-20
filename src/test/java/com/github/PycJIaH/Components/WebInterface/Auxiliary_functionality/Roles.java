@@ -398,6 +398,36 @@ public class Roles {
         }
     }
 
+    @Test
+    @DisplayName("11. Удаление записи роли admin, негативный сценарий") //ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ НЕ ЗАПУСКАТЬ, ВСЁ ЛОМАЕТ
+    public void DeletingRoleEntryAdminNegativeWay() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор вкладки "Роли":
+            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
+            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            administration.click();
+            roles.click();
+            //Локатор кнопки "Удалить запись" для admin
+            WebElement deleteAdminUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//button[@title='Delete record']"));
+            //3. Нажать на иконку "Удалить запись" роли с названием "admin"
+            deleteAdminUserButton.click();
+            //4. Появилось модальное диалоговое окно с текстом "Вы уверены что хотите удалить эту запись?"
+            Alert ConfirmDelete = driver.switchTo().alert();
+            //5. Нажать на кнопку "ОК"
+            ConfirmDelete.accept();
+            //6. В таблице "Список" присутствует строка со значением "admin" в столбце "Название роли" - не реализовано в данном релизе программы
+            //7. Под основным меню появилось сообщение "Ошибка удаления записи: Нельзя удалить роль admin." - не реализовано в данном релизе программы
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
