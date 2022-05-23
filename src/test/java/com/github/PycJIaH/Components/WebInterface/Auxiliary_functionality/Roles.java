@@ -2,6 +2,7 @@ package com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality;
 
 import com.google.common.cache.AbstractCache;
 import com.google.common.cache.Cache;
+import dev.failsafe.internal.util.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -13,6 +14,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -387,11 +389,19 @@ public class Roles {
             nameRoleField.sendKeys("admin");
             //5. Нажать на кнопку "Сохранить"
             saveButton.click();
-            //6. Дубликат роли "admin" не создался
             //Локатор ошибки целостности
             WebElement errorMessage = driver.findElement(new By.ByXPath("//div[@class=\"alert alert-danger alert-dismissable\" and contains(string(), \"Ошибка целостности.\")]"));
-            //7. Под основным меню появилось сообщение "Ошибка целостности."
+            //6. Под главным меню появилось сообщение "Ошибка целостности."
             assertTrue(errorMessage.isDisplayed());
+            //Локатор вкладки "Список"
+            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
+            //7. Перейти во вкладку "Список"
+            listRole.click();
+            //8. В таблице "Список" содержится только 1 строка со значением "admin" в столбце "Название роли"
+            List<WebElement> countОfLines = driver.findElements(new By.ByXPath("//td[@class='col-name' and normalize-space()='admin']"));
+            int expectedCountList = 1;
+            int actualCountList = countОfLines.size();
+            assertEquals(expectedCountList, actualCountList);
 
         } finally {
             driver.quit();
@@ -399,7 +409,8 @@ public class Roles {
     }
 
     @Test
-    @DisplayName("11. Удаление записи роли admin, негативный сценарий") //ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ НЕ ЗАПУСКАТЬ, ВСЁ ЛОМАЕТ
+    @DisplayName("11. Удаление записи роли admin, негативный сценарий")
+    //ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ НЕ ЗАПУСКАТЬ, ВСЁ ЛОМАЕТ
     public void DeletingRoleEntryAdminNegativeWay() {
 
         try {
@@ -421,10 +432,86 @@ public class Roles {
             //5. Нажать на кнопку "ОК"
             ConfirmDelete.accept();
             //6. В таблице "Список" присутствует строка со значением "admin" в столбце "Название роли" - не реализовано в данном релизе программы
-            //7. Под основным меню появилось сообщение "Ошибка удаления записи: Нельзя удалить роль admin." - не реализовано в данном релизе программы
+            //7. Под главным меню появилось сообщение "Ошибка удаления записи: Нельзя удалить роль admin." - не реализовано в данном релизе программы
 
         } finally {
             driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("12. Удаление записи роли через выбор")
+    public void removeCreatedRoleViaSelected() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //2. Создать роль "tester_12"
+            String testerName = "tester_" + new Random().ints(501, 600).findFirst().getAsInt();
+            createRole(testerName);
+            //Локатор имени пользователя вновь созданного
+            WebElement usernameForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']"));
+            //Локатор чекбокса в таблице пользователей+
+            WebElement checkBoxTable = driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']/..//input[@type='checkbox']"));
+            //3. Нажать на чекбокс "Выберите запись" роли с названием "tester_12"
+            checkBoxTable.click();
+            //Локатор вкладки "С выбранным"
+            WebElement withSelected = driver.findElement(new By.ByXPath("//a[text()='С выбранным']"));
+            //4. Перейти во вкладку "С выбранным"
+            withSelected.click();
+            //Локатор пункта меню "Удалить"
+            WebElement deleteUserButton = driver.findElement(new By.ByXPath("//a[text()='Удалить']"));
+            //5. Выбрать пункт из меню "Удалить"
+            deleteUserButton.click();
+            //6. Появилось модальное диалоговое окно с текстом "Вы уверены что хотите удалить ?"
+            Alert ConfirmDelete = driver.switchTo().alert();
+            //7. Нажать на "ОК"
+            ConfirmDelete.accept();
+            //8. В списке отсутствует строка со значением "user" в столбце "Логин пользователя"
+            assertFalse(isElementExists(usernameForDelete), "Пользователь не удален");
+
+        } finally {
+            driver.quit();
+        }
+    }
+    @Test
+    @DisplayName("13. Удаление записей ролей через выбор Все, негативный сценарий")
+    public void removeAllCreatedRolesViaSelectedAllNegativeWay() {
+
+        try {
+            //1.Войти на сайт с пользователем "admin"
+            permanentAuthorization();
+            //2. Создать роль "tester_13_1"
+            String testerName = "tester_" + new Random().ints(601, 700).findFirst().getAsInt();
+            createRole(testerName);
+            //3. Создать роль "tester_13_2"
+            String testerName2 = "tester_" + new Random().ints(701, 800).findFirst().getAsInt();
+            createRole(testerName2);
+            //4. Создать роль "tester_13_3"
+            String testerName3 = "tester_" + new Random().ints(801, 900).findFirst().getAsInt();
+            createRole(testerName3);
+            //Локатор чекбокса в таблице пользователей+
+            WebElement checkBoxAllTable = driver.findElement(new By.ByXPath("//input[@type='checkbox']/..//input[@title='Выбрать все записи']"));
+            //5. Нажать на чекбокс "Выбрать все записи"
+            checkBoxAllTable.click();
+            //Локатор вкладки "С выбранным"
+            WebElement withSelected = driver.findElement(new By.ByXPath("//a[text()='С выбранным']"));
+            //6. Перейти во вкладку "С выбранным"
+            withSelected.click();
+            //Локатор пункта меню "Удалить"
+            WebElement deleteUserButton = driver.findElement(new By.ByXPath("//a[text()='Удалить']"));
+            //7. Выбрать пункт из меню "Удалить"
+            deleteUserButton.click();
+            //8. Появилось модальное диалоговое окно с текстом "Вы уверены что хотите удалить ?"
+            Alert ConfirmDelete = driver.switchTo().alert();
+            //9. Нажать на "ОК"
+//            ConfirmDelete.accept();
+            Stream.of().map(entry -> fail("ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ УДАЛЯЕТ УЧЁТНУЮ ЗАПИСЬ admin"));
+            //10. В таблице "Список" отсутствуют 3 строки со значениями - "tester_13_1", "tester_13_2", "tester_13_3" и присутствует 1 строка со значением "admin", в столбце "Название роли"
+            //11. Под главным меню появилось сообщение "Ошибка удаления записи: Нельзя удалить роль admin."
+
+        } finally {
+//            driver.quit();
         }
     }
 
