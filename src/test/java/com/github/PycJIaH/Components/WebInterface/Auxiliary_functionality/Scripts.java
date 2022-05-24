@@ -36,7 +36,7 @@ public class Scripts {
             WebElement createButton = driver.findElement(new By.ByXPath("//a[normalize-space()='Создать']"));
             log.info("3. Нажать на вкладку \"Создать\"");
             createButton.click();
-            log.info("4. В поле \"Агенты\" выбрать значение \"CerediraTess\" - - Поле отсутствует в данном релизе программы");
+            log.info("4. В поле \"Агенты\" выбрать значение \"CerediraTess\" - Поле отсутствует в данном релизе программы");
             //Локатор поля "Имя скрипта"
             WebElement scriptName = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
             log.info("5. В поле \"Имя скрипта\" ввести значение \"test_1.bat\"");
@@ -52,6 +52,31 @@ public class Scripts {
             saveButton.click();
             log.info("8. В таблице \"Список\" отображается строка со значением \"test_1.bat\" в столбце \"Имя скрипта\"");
             assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + scriptNameValue + "']")).isDisplayed());
+
+            log.info("СЛЕДУЮЩИЕ ШАГИ ПРИМЕНИМЫ ИЗ-ЗА ОТСУТСТВИЯ 4 ШАГА В ДАННОМ КЕЙСЕ И В НОВОМ РЕЛИЗЕ БУДУТ УДАЛЕНЫ");
+            // Локатор раздела "Администрирование"
+            WebElement administration2 = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            //Локатор раздела "Агенты"
+            WebElement agents = driver.findElement(new By.ByXPath("//a[normalize-space()='Агенты']"));
+            log.info("В главном меню перейти в раздел \"Администрирование -> Агенты\"");
+            administration2.click();
+            agents.click();
+            //Локатор кнопки "Редактировать запись"
+            WebElement editAgentCerediraTessButton = driver.findElement(new By.ByXPath("//td[normalize-space()='CerediraTess']/..//a[@title='Редактировать запись']"));
+            log.info("Нажать на иконку \"Редактировать запись\" агента с названием \"CerediraTess\"");
+            editAgentCerediraTessButton.click();
+            //Локатор поля "Скрипты"
+            WebElement scriptsField = driver.findElement(new By.ByXPath("//*[@id=\"s2id_scripts\"]/ul"));
+            log.info("Выбрать в поле \"Скрипты\" ...");
+            scriptsField.click();
+            log.info("...значение вновь созданного имени скрипта");
+            //Локатор значения вновь созданного скрипта
+            WebElement chooseScriptNameValue = driver.findElement(new By.ByXPath("//*[contains(@id,\"select2-result-label-\") and text()='" + scriptNameValue + "']"));
+            chooseScriptNameValue.click();
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton2 = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            log.info("Нажать на кнопку \"Сохранить\"");
+            saveButton2.click();
 
         } finally {
             driver.quit();
