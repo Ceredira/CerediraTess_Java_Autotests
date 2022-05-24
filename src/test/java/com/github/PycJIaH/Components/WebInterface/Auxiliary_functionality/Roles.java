@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Roles {
 
     final Logger log = LoggerFactory.getLogger(Roles.class);
-
     WebDriver driver;
 
     @Test
