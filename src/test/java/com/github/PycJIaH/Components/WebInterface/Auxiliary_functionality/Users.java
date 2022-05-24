@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class Users {
 
-    final Logger log = LoggerFactory.getLogger(Roles.class);
+    final Logger log = LoggerFactory.getLogger(Users.class);
     WebDriver driver;
 
     @Test
