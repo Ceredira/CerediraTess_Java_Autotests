@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.WatchEvent;
 import java.time.Duration;
@@ -20,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class Roles {
 
+    final Logger log = LoggerFactory.getLogger(Roles.class);
+
     WebDriver driver;
 
     @Test
@@ -27,20 +31,20 @@ public class Roles {
     public void existenceCheckRoleAdmin() {
 
         try {
-            //1. Войти на сайт с пользователем "admin"
+            log.info("1. Войти на сайт с пользователем \"admin\"");
             permanentAuthorization();
-            //Локатор раздела "Администрирование":
+            // Локатор раздела "Администрирование"
             WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-            //Локатор вкладки "Роли":
+            // Локатор вкладки "Роли"
             WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
-            //2. В главном меню перейти в раздел "Администрирование -> Роли"
+            log.info("2. В главном меню перейти в раздел \"Администрирование -> Роли\"");
             administration.click();
             roles.click();
-            //3. В таблице "Список" отображается 1 строка со значением "admin" в столбце "Название роли"
+            log.info("3. В таблице \"Список\" отображается 1 строка со значением \"admin\" в столбце \"Название роли\"");
             //Проверка на кол-во записей в таблице
-            List<WebElement> countОfLines = driver.findElements(new By.ByXPath("//td[@class='col-name' and normalize-space()='admin']"));
+            List<WebElement> countOfLines = driver.findElements(new By.ByXPath("//td[@class='col-name' and normalize-space()='admin']"));
             int expectedCountList = 1;
-            int actualCountList = countОfLines.size();
+            int actualCountList = countOfLines.size();
             assertEquals(expectedCountList, actualCountList);
         } finally {
             driver.quit();
@@ -522,7 +526,7 @@ public class Roles {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 
         try {
-            //1. Перейти на страницу http://{url}:7801/
+            log.info("    1. Перейти на страницу http://{url}:7801/");
             driver.get("http://192.168.242.128:7801/");
             // Локатор поля "Логин"
             WebElement login = driver.findElement(new By.ByXPath("//*[@id=\"username\"]"));
@@ -530,11 +534,11 @@ public class Roles {
             WebElement password = driver.findElement(new By.ByXPath("//*[@id=\"password\"]"));
             // Локатор Кнопки "Войти"
             WebElement submit = driver.findElement(new By.ByXPath("//*[@id=\"submit\"]"));
-            //2. В поле "Логин" вводим значение "admin"
+            log.info("    2. В поле \"Логин\" вводим значение \"admin\"");
             login.sendKeys("admin");
-            //3. В поле "Пароль" вводим значение "admin"
+            log.info("    3. В поле \"Пароль\" вводим значение \"admin\"");
             password.sendKeys("admin");
-            //4. Нажать на кнопку "Войти"
+            log.info("    4. Нажать на кнопку \"Войти\"");
             submit.click();
 
         } finally {
