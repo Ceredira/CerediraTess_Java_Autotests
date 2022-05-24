@@ -122,7 +122,7 @@ public class Users {
 
     @Test
     @DisplayName("5. Просмотр записи пользователя")
-    public void checkViewadmin() {
+    public void checkViewAdmin() {
 
         try {
             log.info("1. Войти на сайт с пользователем \"admin\"");
@@ -178,15 +178,13 @@ public class Users {
             log.info("4.5. Дата создания: yyyy-mm-dd hh:tt:ss.ms");
             assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Дата создания']")).isDisplayed(), "Поле \"Дата создания\" отсутствует");
             assertTrue(createDate.isDisplayed(), "Значение даты создания отсутствует");
-            String expectedCreateDate = "2022-05-24 16:18:01.655547";
             String actualCreateDate = createDate.getText();
-            assertEquals(expectedCreateDate, actualCreateDate);
+            assertTrue(actualCreateDate.matches("\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d+"));
             log.info("4.6. Последнее обновление: yyyy-mm-dd hh:tt:ss.ms");
             assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Последнее обновление']")).isDisplayed(), "Поле \"Последнее обновление\" отсутствует");
             assertTrue(lastUpdateDate.isDisplayed(), "Значение даты последнего обновления отсутствует");
-            String expectedLastUpdateDate = "2022-05-24 16:18:01.655547";
             String actualLastUpdateDate = lastUpdateDate.getText();
-            assertEquals(expectedLastUpdateDate, actualLastUpdateDate);
+            assertTrue(actualLastUpdateDate.matches("\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d+"));
             log.info("4.7. Роли: admin");
             assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Роли']")).isDisplayed(), "Поле \"Роли\" отсутствует");
             assertTrue(roleValue.isDisplayed(), "Значение Роли отсутствует");
