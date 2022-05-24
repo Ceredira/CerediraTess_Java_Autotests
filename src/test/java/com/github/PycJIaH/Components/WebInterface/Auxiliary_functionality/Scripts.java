@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Scripts {
     final Logger log = LoggerFactory.getLogger(Roles.class);
@@ -29,10 +32,29 @@ public class Scripts {
             log.info("2. В главном меню перейти в раздел \"Администрирование -> Скрипты\"");
             administration.click();
             scripts.click();
-
+            //Локатор кнопки "Создать"
+            WebElement createButton = driver.findElement(new By.ByXPath("//a[normalize-space()='Создать']"));
+            log.info("3. Нажать на вкладку \"Создать\"");
+            createButton.click();
+            log.info("4. В поле \"Агенты\" выбрать значение \"CerediraTess\" - - Поле отсутствует в данном релизе программы");
+            //Локатор поля "Имя скрипта"
+            WebElement scriptName = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            log.info("5. В поле \"Имя скрипта\" ввести значение \"test_1.bat\"");
+            String scriptNameValue = "test_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            scriptName.sendKeys(scriptNameValue);
+            //Локатор поля "Описание"
+            WebElement descriptionScript = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
+            log.info("6. В поле \"Описание\" ввести значение \"Описание скрипта\"");
+            descriptionScript.sendKeys("Описание скрипта");
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            log.info("7. Нажать на кнопку \"Сохранить\"");
+            saveButton.click();
+            log.info("8. В таблице \"Список\" отображается строка со значением \"test_1.bat\" в столбце \"Имя скрипта\"");
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + scriptNameValue + "']")).isDisplayed());
 
         } finally {
-//            driver.quit();
+            driver.quit();
         }
     }
 
