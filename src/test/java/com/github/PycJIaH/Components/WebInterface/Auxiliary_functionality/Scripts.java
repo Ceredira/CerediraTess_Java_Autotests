@@ -178,6 +178,38 @@ public class Scripts {
         }
     }
 
+    @Test
+    @DisplayName("5. Изменение записи скрипта, изменение поля Имя скрипта")
+    public void changeScriptChangeFieldName() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_5_1.bat\"");
+            String scriptNameValue = "test_5_1_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор кнопки "Редактировать запись"
+            WebElement editUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Редактировать запись']"));
+            log.info("3. Нажать на иконку \"Редактировать запись\" скрипта с именем \"test_5_1.bat\"");
+            editUserButton.click();
+            //Локатор поля "Имя скрипта"
+            WebElement scriptNameField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            log.info("4. Ввести в поле \"Имя скрипта\" значение \"test_5_2.bat\"");
+            String editedScriptName = "test_5_2_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            scriptNameField.clear();
+            scriptNameField.sendKeys(editedScriptName);
+            log.info("5. Нажать на кнопку \"Сохранить\"");
+            saveButton.click();
+            log.info("6. В таблице \"Список\" отображается строка со значением \"test_5_2.bat\" в столбце \"Имя скрипта\"");
+            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedScriptName + "']")).isDisplayed(), "Отсутствует изменённое имя скрипта в списке");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
