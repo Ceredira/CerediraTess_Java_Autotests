@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
@@ -290,7 +291,7 @@ public class Scripts {
             log.info("2. Создать скрипт \"test_8_1.bat\"");
             String scriptNameValue = "test_8_1_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
             createScript(scriptNameValue);
-            //Локатор кнопки "Дублировать запись" скрипта с именем "test_7_1.bat"
+            //Локатор кнопки "Дублировать запись" скрипта с именем "test_8_1.bat"
             WebElement duplicateScriptButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Duplicate Row']"));
             log.info("3.Нажать на иконку \"Дублировать запись\" скрипта с именем \"test_8_1.bat\"");
             duplicateScriptButton.click();
@@ -316,6 +317,48 @@ public class Scripts {
             listRole.click();
             log.info("9. В таблице \"Список\" отображается строка со значением \"test_8_2.bat\" в столбце \"Имя скрипта\"");
             assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + editedScriptName + "']")).isDisplayed());
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("9. Дублирование записи скрипта, негативный сценарий")
+    public void duplicateScriptEntryNegativeWay() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_9.bat\"");
+            String scriptNameValue = "test_9_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор кнопки "Дублировать запись" скрипта с именем "test_9.bat"
+            WebElement duplicateScriptButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Duplicate Row']"));
+            log.info("3. Нажать на иконку \"Дублировать запись\" скрипта с именем \"test_9.bat\"");
+            duplicateScriptButton.click();
+            //Локатор поля "Имя скрипта"
+            WebElement scriptNameField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@class=\"form-group\"]/..//input[@value='Сохранить']"));
+            log.info("4. Ввести в поле \"Имя скрипта\" значение \"test_9.bat\"");
+            scriptNameField.clear();
+            scriptNameField.sendKeys(scriptNameValue);
+            log.info("5. Нажать на кнопку \"Сохранить\"");
+            saveButton.click();
+            //Локатор ошибки целостности
+            WebElement errorMessage = driver.findElement(new By.ByXPath("//div[@class=\"alert alert-danger alert-dismissable\" and contains(string(), \"Ошибка целостности.\")]"));
+            log.info("6. Под главным меню появилось сообщение \"Ошибка целостности.\"");
+            assertTrue(errorMessage.isDisplayed());
+            //Локатор вкладки "Список"
+            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
+            log.info("7. Перейти во вкладку \"Список\"");
+            listRole.click();
+            log.info("8. В таблице \"Список\" содержится только 1 строка со значением \"test_9.bat\" в столбце \"Имя скрипта\"");
+            List<WebElement> countОfLines = driver.findElements(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + scriptNameValue + "']"));
+            int expectedCountList = 1;
+            int actualCountList = countОfLines.size();
+            assertEquals(expectedCountList, actualCountList);
 
         } finally {
             driver.quit();
