@@ -93,7 +93,7 @@ public class Scripts {
             log.info("2. Создать скрипт \"test_2.bat\"");
             String scriptNameValue = "test_" + new Random().ints(101, 200).findFirst().getAsInt() + ".bat";
             createScript(scriptNameValue);
-            //Локатор имени пользователя вновь созданного (в ролях)
+            //Локатор имени скрипта вновь созданного (в скриптах)
             WebElement scriptForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']"));
             //Локатор кнопки "Удалить запись"
             WebElement deleteUserRoleButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//button[@title='Delete record']"));
@@ -107,6 +107,39 @@ public class Scripts {
             assertFalse(isElementExists(scriptForDelete), "Скрипт не удален");
             log.info("7. В списке появилась надпись \"Нет элементов в таблице.\"");
             assertTrue(driver.findElement(new By.ByXPath("//div[normalize-space()='Нет элементов в таблице.']")).isDisplayed(), "В таблице присутствуют другие записи скриптов");
+
+        } finally {
+            driver.quit();
+        }
+    }
+    @Test
+    @DisplayName("3. Удаление записи скрипта, когда скрипт не последний")
+    public void deleteScriptWhenScriptNotLast() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_3_1.bat\"");
+            String scriptNameValue1 = "test_3_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue1);
+            log.info("3. Создать скрипт \"test_3_2.bat\"");
+            String scriptNameValue2 = "test_3_" + new Random().ints(101, 200).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue2);
+            log.info("4. Создать скрипт \"test_3_3.bat\"");
+            String scriptNameValue3 = "test_3_" + new Random().ints(201, 300).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue3);
+            //Локатор имени скрипта вновь созданного (в скриптах)
+            WebElement scriptForDelete2 = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue2 + "']"));
+            //Локатор кнопки "Удалить запись"
+            WebElement deleteUserRoleButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue2 + "']/..//button[@title='Delete record']"));
+            log.info("5. Нажать на иконку \"Удалить запись\" скрипта с именем \"test_3_2.bat\"");
+            deleteUserRoleButton.click();
+            log.info("6. Появилось модальное диалоговое окно с текстом \"Вы уверены что хотите удалить эту запись?\"");
+            Alert ConfirmDelete = driver.switchTo().alert();
+            log.info("7. Нажать на кнопку \"ОК\"");
+            ConfirmDelete.accept();
+            log.info("8. В списке отсутствует строка со значением \"test_3_2.bat\" в столбце \"Имя скрипта\"");
+            assertFalse(isElementExists(scriptForDelete2), "Скрипт созанный вторым не удален");
 
         } finally {
             driver.quit();
