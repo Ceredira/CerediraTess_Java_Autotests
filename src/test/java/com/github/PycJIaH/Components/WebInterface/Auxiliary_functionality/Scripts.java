@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +12,7 @@ import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Scripts {
     final Logger log = LoggerFactory.getLogger(Scripts.class);
@@ -112,6 +112,7 @@ public class Scripts {
             driver.quit();
         }
     }
+
     @Test
     @DisplayName("3. Удаление записи скрипта, когда скрипт не последний")
     public void deleteScriptWhenScriptNotLast() {
@@ -210,6 +211,43 @@ public class Scripts {
         }
     }
 
+    @Test
+    @DisplayName("6. Просмотр записи скрипта")
+    public void viewScriptEntry() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_6.bat\"");
+            String scriptNameValue = "test_6_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор кнопки "Просмотр записи"
+            WebElement ViewScriptButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Просмотр записи']"));
+            log.info("3. Нажать на иконку \"Просмотр записи\" скрипта с именем \"test_6.bat\"");
+            ViewScriptButton.click();
+            // Ждем появления формы
+            WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait1.until(webDriver -> driver.findElement(new By.ByXPath("//h3[contains(text(), 'Просмотр записи')]")).isDisplayed());
+            //Локатор значения поля "Имя скрипта":
+            WebElement scriptViewNameValue = driver.findElement(new By.ByXPath("//table//b[text()='Имя скрипта']/../../td[2]"));
+            //Локатор значения поля "Описание":
+            WebElement descriptionValue = driver.findElement(new By.ByXPath("//table//b[text()='Описание']/../../td[2]"));
+            log.info("4. В поле \"Имя скрипта\" присутствует значение \"test_6.bat\"");
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Имя скрипта']")).isDisplayed(), "Поле \"Имя скрипта\" отсутствует");
+            assertTrue(scriptViewNameValue.isDisplayed(), "Значение поля \"Имя скрипта\" отсутствует");
+            String expectedScriptViewNameValue = scriptNameValue;
+            String actualScriptViewNameValue = scriptViewNameValue.getText();
+            assertEquals(expectedScriptViewNameValue, actualScriptViewNameValue);
+            log.info("5. В поле \"Описание\" отсутствует значение");
+            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Описание']")).isDisplayed(), "Поле \"Описание\" отсутствует");
+            assertTrue(descriptionValue.getText().isEmpty(), "В поле \"Описание\" присутствует значение ");
+            log.info("6. В поле \"Агенты\" отсутствует значение - Поле отсутствует в данном релизе программы");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
@@ -259,7 +297,7 @@ public class Scripts {
             log.info("      4. Нажать на кнопку \"Сохранить\"");
             saveButton.click();
             log.info("      5. В таблице \"Список\" отображается строка со значением \"${test_name}\" в столбце \"Имя скрипта\"");
-            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='"+ scriptName +"']")).isDisplayed());
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + scriptName + "']")).isDisplayed());
 
         } finally {
         }
