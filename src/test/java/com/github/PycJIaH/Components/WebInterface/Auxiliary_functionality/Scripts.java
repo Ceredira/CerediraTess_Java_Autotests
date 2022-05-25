@@ -256,7 +256,7 @@ public class Scripts {
             log.info("1. Войти на сайт с пользователем \"admin\"");
             permanentAuthorization();
             log.info("2. Создать скрипт \"test_7_1.bat\"");
-            String scriptNameValue = "test_7_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            String scriptNameValue = "test_7_1_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
             createScript(scriptNameValue);
             //Локатор кнопки "Дублировать запись" скрипта с именем "test_7_1.bat"
             WebElement duplicateScriptButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Duplicate Row']"));
@@ -273,6 +273,48 @@ public class Scripts {
             log.info("5.Нажать на кнопку \"Сохранить\"");
             saveButton.click();
             log.info("6. В таблице \"Список\" отображается строка со значением \"test_7_2.bat\" в столбце \"Имя скрипта\"");
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + editedScriptName + "']")).isDisplayed());
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("8. Дублирование записи скрипта, позитивный сценарий (2 способ)")
+    public void duplicateScriptEntrySecondWay() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_8_1.bat\"");
+            String scriptNameValue = "test_8_1_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор кнопки "Дублировать запись" скрипта с именем "test_7_1.bat"
+            WebElement duplicateScriptButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Duplicate Row']"));
+            log.info("3.Нажать на иконку \"Дублировать запись\" скрипта с именем \"test_8_1.bat\"");
+            duplicateScriptButton.click();
+            //Локатор поля "Имя скрипта"
+            WebElement scriptNameField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить и добавить новый объект"
+            WebElement saveAndAddButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить и добавить новый объект']"));
+            log.info("4.Ввести в поле \"Имя скрипта\" значение \"test_8_2.bat\"");
+            String editedScriptName = "test_8_2_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            scriptNameField.clear();
+            scriptNameField.sendKeys(editedScriptName);
+            log.info("5.Нажать на кнопку \"Сохранить и добавить новый объект\"");
+            saveAndAddButton.click();
+            log.info("6. Текущая страница ${url}:7801/admin/Script/duplicate/?id=${id дублируемого скрипта}\n");
+            assertTrue(driver.getCurrentUrl().matches("https?:\\/\\/.*:7801\\/admin\\/Script\\/duplicate\\/\\?id=\\d+"));
+            log.info("7. В строке \"Имя скрипта\" осталось прежнее название \"test_8_1.bat\"");
+            String expectedNameScriptField = scriptNameValue;
+            String actualNameScriptField = driver.findElement(new By.ByXPath("//input[@value='" + scriptNameValue + "']")).getAttribute("value");
+            assertEquals(expectedNameScriptField, actualNameScriptField);
+            //Локатор вкладки "Список"
+            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
+            log.info("8. Перейти во вкладку \"Список\"");
+            listRole.click();
+            log.info("9. В таблице \"Список\" отображается строка со значением \"test_8_2.bat\" в столбце \"Имя скрипта\"");
             assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + editedScriptName + "']")).isDisplayed());
 
         } finally {
