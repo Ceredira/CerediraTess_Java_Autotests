@@ -401,6 +401,56 @@ public class Scripts {
         }
     }
 
+    @Test
+    @DisplayName("11. Удаление записи скрипта через выбор Все")
+    public void removeCreatedScriptViaSelectedAll() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_11_1.bat\"");
+            String scriptNameValue1 = "test_11_1_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue1);
+            log.info("3. Создать скрипт \"test_11_2.bat\"");
+            String scriptNameValue2 = "test_11_2_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue2);
+            log.info("4. Создать скрипт \"test_11_3.bat\"");
+            String scriptNameValue3 = "test_11_3_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue3);
+            //Локатор имени пользователя вновь созданного №1
+            WebElement scriptNameForDelete1 = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue1 + "']"));
+            //Локатор имени пользователя вновь созданного №2
+            WebElement scriptNameForDelete2 = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue2 + "']"));
+            //Локатор имени пользователя вновь созданного №3
+            WebElement scriptNameForDelete3 = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue3 + "']"));
+            //Локатор чекбокса в таблице пользователей+
+            WebElement checkBoxAllTable = driver.findElement(new By.ByXPath("//input[@type='checkbox']/..//input[@title='Выбрать все записи']"));
+            log.info("5. Нажать на чекбокс \"Выбрать все записи\"");
+            checkBoxAllTable.click();
+            //Локатор вкладки "С выбранным"
+            WebElement withSelected = driver.findElement(new By.ByXPath("//a[text()='С выбранным']"));
+            log.info("6. Перейти во вкладку \"С выбранным\"");
+            withSelected.click();
+            //Локатор пункта меню "Удалить"
+            WebElement deleteUserButton = driver.findElement(new By.ByXPath("//a[text()='Удалить']"));
+            log.info("7. Выбрать пункт из меню \"Удалить\"");
+            deleteUserButton.click();
+            log.info("8. Появилось модальное диалоговое окно с текстом \"Вы уверены что хотите удалить?\"");
+            Alert ConfirmDelete = driver.switchTo().alert();
+            log.info("9. Нажать на кнопку \"ОК\"");
+            ConfirmDelete.accept();
+            log.info("10. В таблице \"Список\" отсутствуют строки со значениями \"test_11_1.bat\", \"test_11_2.bat\" и \"test_11_3.bat\" в столбце \"Имя скрипта\"\n");
+            assertFalse(isElementExists(scriptNameForDelete1), "Скрипт №1 не удален");
+            assertFalse(isElementExists(scriptNameForDelete2), "Скрипт №2 не удален");
+            assertFalse(isElementExists(scriptNameForDelete3), "Скрипт №3 не удален");
+            log.info("В списке появилась надпись \"Нет элементов в таблице.\"");
+            assertTrue(driver.findElement(new By.ByXPath("//div[normalize-space()='Нет элементов в таблице.']")).isDisplayed(), "В таблице присутствуют другие записи скриптов");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
