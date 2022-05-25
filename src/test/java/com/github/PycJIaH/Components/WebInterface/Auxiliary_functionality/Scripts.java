@@ -365,6 +365,42 @@ public class Scripts {
         }
     }
 
+    @Test
+    @DisplayName("10. Удаление записи скрипта через выбор")
+    public void removeCreatedScriptViaSelected() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_10.bat\"");
+            String scriptNameValue = "test_10_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор имени пользователя вновь созданного
+            WebElement scriptNameForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']"));
+            //Локатор чекбокса в таблице пользователей+
+            WebElement checkBoxTable = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//input[@type='checkbox']"));
+            log.info("3. Нажать на чекбокс \"Выберите запись\" скрипта с именем \"test_10.bat\"");
+            checkBoxTable.click();
+            //Локатор вкладки "С выбранным"
+            WebElement withSelected = driver.findElement(new By.ByXPath("//a[text()='С выбранным']"));
+            log.info("4. Перейти во вкладку \"С выбранным\"");
+            withSelected.click();
+            //Локатор пункта меню "Удалить"
+            WebElement deleteUserButton = driver.findElement(new By.ByXPath("//a[text()='Удалить']"));
+            log.info("5. Выбрать пункт из меню \"Удалить\"");
+            deleteUserButton.click();
+            log.info("6. Появилось модальное диалоговое окно с текстом \"Вы уверены что хотите удалить?\"");
+            Alert ConfirmDelete = driver.switchTo().alert();
+            log.info("7. Нажать на кнопку \"ОК\"");
+            ConfirmDelete.accept();
+            log.info("8. В таблице \"Список\" отсутствует строка со значением \"test_10.bat\" в столбце \"Имя скрипта\"");
+            assertFalse(isElementExists(scriptNameForDelete), "Скрипт не удален");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
