@@ -40,7 +40,7 @@ public class Scripts {
             //Локатор поля "Имя скрипта"
             WebElement scriptName = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
             log.info("5. В поле \"Имя скрипта\" ввести значение \"test_1.bat\"");
-            String scriptNameValue = "test_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            String scriptNameValue = "test_1_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
             scriptName.sendKeys(scriptNameValue);
             //Локатор поля "Описание"
             WebElement descriptionScript = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
@@ -91,7 +91,7 @@ public class Scripts {
             log.info("1. Войти на сайт с пользователем \"admin\"");
             permanentAuthorization();
             log.info("2. Создать скрипт \"test_2.bat\"");
-            String scriptNameValue = "test_" + new Random().ints(101, 200).findFirst().getAsInt() + ".bat";
+            String scriptNameValue = "test_2_" + new Random().ints(101, 200).findFirst().getAsInt() + ".bat";
             createScript(scriptNameValue);
             //Локатор имени скрипта вновь созданного (в скриптах)
             WebElement scriptForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']"));
@@ -140,6 +140,38 @@ public class Scripts {
             ConfirmDelete.accept();
             log.info("8. В списке отсутствует строка со значением \"test_3_2.bat\" в столбце \"Имя скрипта\"");
             assertFalse(isElementExists(scriptForDelete2), "Скрипт созанный вторым не удален");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("4. Изменение записи скрипта, изменение поля Описание")
+    public void changeScriptChangeFieldDescription() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_4_1.bat\"");
+            String scriptNameValue = "test_4_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор кнопки "Редактировать запись"
+            WebElement editUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Редактировать запись']"));
+            log.info("3. Нажать на иконку \"Редактировать запись\" скрипта с именем \"test_4.bat\"");
+            editUserButton.click();
+            //Локатор поля "Описание"
+            WebElement descriptionField = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            log.info("4. Ввести в поле \"Описание\" значение \"Новое описание\"");
+            String editedDescription = "Новое описание" + new Random().ints(0, 100).findFirst().getAsInt();
+            descriptionField.clear();
+            descriptionField.sendKeys(editedDescription);
+            log.info("5. Нажать на кнопку \"Сохранить\"");
+            saveButton.click();
+            log.info("6. В таблице \"Список\" отображается строка со значением \"Новое описание\" в столбце \"Описание\"");
+            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedDescription + "']")).isDisplayed(), "Отсутствует изменённое описание скрипта в списке");
 
         } finally {
             driver.quit();
