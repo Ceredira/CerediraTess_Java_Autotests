@@ -248,6 +248,38 @@ public class Scripts {
         }
     }
 
+    @Test
+    @DisplayName("7. Дублирование записи скрипта, позитивный сценарий (1 способ)")
+    public void duplicateScriptEntryFirstWay() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_7_1.bat\"");
+            String scriptNameValue = "test_7_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор кнопки "Дублировать запись" скрипта с именем "test_7_1.bat"
+            WebElement duplicateScriptButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//a[@title='Duplicate Row']"));
+            log.info("3.Нажать на иконку \"Дублировать запись\" скрипта с именем \"test_7_1.bat\"");
+            duplicateScriptButton.click();
+            //Локатор поля "Имя скрипта"
+            WebElement scriptNameField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@class=\"form-group\"]/..//input[@value='Сохранить']"));
+            log.info("4.Ввести в поле \"Имя скрипта\" значение \"test_7_2.bat\"");
+            String editedScriptName = "test_7_2_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+            scriptNameField.clear();
+            scriptNameField.sendKeys(editedScriptName);
+            log.info("5.Нажать на кнопку \"Сохранить\"");
+            saveButton.click();
+            log.info("6. В таблице \"Список\" отображается строка со значением \"test_7_2.bat\" в столбце \"Имя скрипта\"");
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + editedScriptName + "']")).isDisplayed());
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
