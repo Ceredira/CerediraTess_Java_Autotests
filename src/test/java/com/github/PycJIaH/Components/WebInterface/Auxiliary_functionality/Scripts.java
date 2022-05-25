@@ -2,20 +2,20 @@ package com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Scripts {
-    final Logger log = LoggerFactory.getLogger(Roles.class);
+    final Logger log = LoggerFactory.getLogger(Scripts.class);
     WebDriver driver;
 
     @Test
@@ -83,6 +83,36 @@ public class Scripts {
         }
     }
 
+    @Test
+    @DisplayName("2. Удаление записи скрипта, когда остался 1 скрипт")
+    public void deleteScriptWhen1ScriptRemains() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+            log.info("2. Создать скрипт \"test_2.bat\"");
+            String scriptNameValue = "test_" + new Random().ints(101, 200).findFirst().getAsInt() + ".bat";
+            createScript(scriptNameValue);
+            //Локатор имени пользователя вновь созданного (в ролях)
+            WebElement scriptForDelete = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']"));
+            //Локатор кнопки "Удалить запись"
+            WebElement deleteUserRoleButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + scriptNameValue + "']/..//button[@title='Delete record']"));
+            log.info("3. Нажать на иконку \"Удалить запись\" скрипта с именем \"test_2.bat\"");
+            deleteUserRoleButton.click();
+            log.info("4. Появилось модальное диалоговое окно с текстом \"Вы уверены что хотите удалить эту запись?\"");
+            Alert ConfirmDelete = driver.switchTo().alert();
+            log.info("5. Нажать на кнопку \"ОК\"");
+            ConfirmDelete.accept();
+            log.info("6. В списке отсутствует строка со значением \"test_2.bat\" в столбце \"Имя скрипта\"");
+            assertFalse(isElementExists(scriptForDelete), "Скрипт не удален");
+            log.info("7. В списке появилась надпись \"Нет элементов в таблице.\"");
+            assertTrue(driver.findElement(new By.ByXPath("//div[normalize-space()='Нет элементов в таблице.']")).isDisplayed(), "В таблице присутствуют другие записи скриптов");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
     private void permanentAuthorization() {
         System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
         driver = new ChromeDriver();
@@ -106,7 +136,44 @@ public class Scripts {
             submit.click();
 
         } finally {
-            ;
         }
+    }
+
+    public void createScript(String scriptName) {
+
+        try {
+            //Локатор раздела "Администрирование":
+            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
+            // Локатор раздела "Скрипты"
+            WebElement scripts = driver.findElement(new By.ByXPath("//a[normalize-space()='Скрипты']"));
+            log.info("      1. В главном меню перейти в раздел \"Администрирование -> Скрипты\"");
+            administration.click();
+            scripts.click();
+            //Локатор кнопки "Создать"
+            WebElement createButton = driver.findElement(new By.ByXPath("//a[normalize-space()='Создать']"));
+            log.info("      2. Нажать на вкладку \"Создать\"");
+            createButton.click();
+            //Локатор поля "Имя скрипта"
+            WebElement scriptNameValue = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
+            //Локатор кнопки "Сохранить"
+            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
+            log.info("      3. В поле \"Имя скрипта\" вставить \"${test_name}\"");
+            scriptNameValue.sendKeys(scriptName);
+            log.info("      4. Нажать на кнопку \"Сохранить\"");
+            saveButton.click();
+            log.info("      5. В таблице \"Список\" отображается строка со значением \"${test_name}\" в столбце \"Имя скрипта\"");
+            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='"+ scriptName +"']")).isDisplayed());
+
+        } finally {
+        }
+    }
+
+    private boolean isElementExists(WebElement el1) {
+        try {
+            el1.isDisplayed();
+            return true;
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+        }
+        return false;
     }
 }
