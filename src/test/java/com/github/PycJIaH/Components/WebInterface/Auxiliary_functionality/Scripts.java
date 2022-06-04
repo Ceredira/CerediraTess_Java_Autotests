@@ -9,9 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.*;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -445,6 +444,64 @@ public class Scripts {
             assertFalse(isElementExists(scriptNameForDelete3), "Скрипт №3 не удален");
             log.info("В списке появилась надпись \"Нет элементов в таблице.\"");
             assertTrue(driver.findElement(new By.ByXPath("//div[normalize-space()='Нет элементов в таблице.']")).isDisplayed(), "В таблице присутствуют другие записи скриптов");
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Test
+    @DisplayName("12. Сортировка в столбце Имя скрипта")
+    public void sortingScriptNameColumn() {
+
+        try {
+            log.info("1. Войти на сайт с пользователем \"admin\"");
+            permanentAuthorization();
+
+//            log.info("2. Создать скрипт \"B_test_12.bat\"");
+//            String scriptNameValue1 = "B_test_12_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+//            createScript(scriptNameValue1);
+//            log.info("3. Создать скрипт \"A_test_12.bat\"");
+//            String scriptNameValue2 = "A_test_12_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+//            createScript(scriptNameValue2);
+            log.info("2. Создать скрипты:");
+            for (int i = 0; i < 10; i++) {
+                String scriptNameValue = "A_test_12_" + i + "_" + new Random().ints(0, 100).findFirst().getAsInt() + ".bat";
+                log.info("    2." + (2 + i) + ". Создать скрипт " + scriptNameValue);
+                createScript(scriptNameValue);
+            }
+
+
+            //Локатор кнопки "Сортировка по имени скрипта"
+            WebElement sortByNameScriptButton = driver.findElement(new By.ByXPath("//a[@title='Сортировать по Имя скрипта']"));
+            log.info("4. Нажать на заголовок столбца \"Имя скрипта\"");
+            sortByNameScriptButton.click();
+            log.info("5. Список отсортировался в порядке возрастания по полю \"Имя скрипта\"");
+            ArrayList<String> obtainedListUp = new ArrayList<>();
+            List<WebElement> scriptsList = driver.findElements(new By.ByXPath("//td[@class='col-name']"));
+
+            scriptsList.forEach(we -> obtainedListUp.add(we.getText()));
+
+            ArrayList<String> sortedList = new ArrayList<>();
+
+            obtainedListUp.forEach(s -> sortedList.add(s));
+
+            Collections.sort(sortedList);
+            assertTrue(sortedList.equals(obtainedListUp));
+            log.info("6. Рядом с надписью \"Имя скрипта\" появился значок сортировки");
+            assertTrue(driver.findElement(new By.ByXPath("//a[@href='/admin/Script/?sort=0&desc=1']")).isDisplayed());
+            log.info("7. Нажать на значок сортировки \"Сортировать по Имя скрипта\"");
+            //Локатор кнопки "Сортировка по имени скрипта"
+            WebElement sortByNameScriptButton2 = driver.findElement(new By.ByXPath("//a[@title='Сортировать по Имя скрипта']"));
+            sortByNameScriptButton2.click();
+            log.info("8. Список отсортировался в порядке убывания по полю \"Имя скрипта\"");
+            assertTrue(driver.findElement(new By.ByXPath("//a[@href='/admin/Script/?sort=0']")).isDisplayed());
+            ArrayList<String> obtainedListDown = new ArrayList<>();
+            List<WebElement> scriptsList2 = driver.findElements(new By.ByXPath("//td[@class='col-name']"));
+            scriptsList2.forEach(we -> obtainedListDown.add(we.getText()));
+
+            Collections.reverse(sortedList);
+            assertTrue(sortedList.equals(obtainedListDown));
 
         } finally {
             driver.quit();
