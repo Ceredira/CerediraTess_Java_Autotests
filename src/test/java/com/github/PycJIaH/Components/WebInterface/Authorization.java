@@ -1,6 +1,7 @@
 package com.github.PycJIaH.Components.WebInterface;
 
 import com.github.PycJIaH.Components.WebInterface.Pages.LoginPage;
+import com.github.PycJIaH.Components.WebInterface.Pages.MainPage;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -45,31 +46,15 @@ public class Authorization {
         lp.submitIsDisplayed();
         lp.setUsername("admin");
         lp.setPassword("admin");
-        lp.clickSubmit();
+        MainPage mp = lp.clickSubmitNewPage();
 
         //Следующая страница:
-        //Локатор "Выполнение запросов"
-        WebElement performingRequests = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='Выполнение запросов']"));
-        //Локатор "Блокировка агентов"
-        WebElement blockAgents = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='Блокировка агентов']"));
-        //Локатор кнопки "Обовить скрипты"
-        WebElement updateScriptsButton = driver.findElement(new By.ByXPath("//*[@id=\"updateCT\"]"));
-        //Локатор кнопки "admin - Выход"
-        WebElement adminExitButton = driver.findElement(new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='admin - Выход']"));
-        log.info("4.1. В главном меню есть пункт \"Выполнение запросов\"");
-        assertTrue(performingRequests.isDisplayed(), "Нет пункта \"Выполнение запросов\"");
-        log.info("4.2. В главном меню есть пункт \"Блокировка агентов\"");
-        assertTrue(blockAgents.isDisplayed(), "Нет пункта \"Блокировка агентов\"");
-        log.info("4.3. Заголовок страницы равен \"CerediraTess - Выполнение запросов\"");
-        String expectedTitle2 = "CerediraTess - Выполнение запросов";
-        String actualTitle2 = driver.getTitle();
-        assertEquals(actualTitle2, expectedTitle2);
-        log.info("4.4. На странице есть кнопка \"Обновить скрипты\"");
-        assertTrue(updateScriptsButton.isDisplayed(), "Нет кнопки \"Обновить скрипты\"");
-        log.info("4.5. В главном меню есть пункт \"admin - Выход\"");
-        assertTrue(adminExitButton.isDisplayed(), "Нет кнопки \"admin - Выход\"");
-        log.info("5. Нажать на пункт меню \"admin - Выход\"");
-        adminExitButton.click();
+        mp.performingRequestsIsDisplayed();
+        mp.blockAgentsIsDisplayed();
+        mp.expectedTitleIsDisplayed();
+        mp.updateScriptsButtonIsDisplayed();
+        mp.adminExitButtonIsDisplayed();
+        mp.clickAdminExitButton();
     }
 
     @Test
@@ -81,10 +66,7 @@ public class Authorization {
         lp.setUsername("admin");
         lp.setPassword("1234");
         lp.clickSubmit();
-        log.info("5. Появилось сообщение об ошибке \"Invalid password\"");
-        String expectedErrorMessage = "Invalid password";
-        String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Invalid password']")).getText();
-        assertEquals(expectedErrorMessage, actualErrorMessage);
+        lp.invalidPasswordMessage();
         lp.checkHeader();
     }
 
@@ -97,10 +79,7 @@ public class Authorization {
         lp.setUsername("admin23");
         lp.setPassword("1234");
         lp.clickSubmit();
-        log.info("5. Появилось сообщение об ошибке \"Specified user does not exist\"");
-        String expectedErrorMessage = "Specified user does not exist";
-        String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Specified user does not exist']")).getText();
-        assertEquals(expectedErrorMessage, actualErrorMessage);
+        lp.userDoesNotExistMessage();
         lp.checkHeader();
     }
 

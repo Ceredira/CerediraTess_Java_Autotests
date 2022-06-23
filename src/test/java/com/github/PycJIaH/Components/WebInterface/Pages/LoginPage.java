@@ -1,6 +1,7 @@
 package com.github.PycJIaH.Components.WebInterface.Pages;
 
 import com.github.PycJIaH.Components.WebInterface.Authorization;
+import org.apache.log4j.chainsaw.Main;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -50,6 +51,13 @@ public class LoginPage {
         driver.findElement(submitBy).click();
     }
 
+    public MainPage clickSubmitNewPage() {
+        log.info("Нажать на кнопку \"Войти\"");
+        driver.findElement(submitBy).click();
+
+        return new MainPage(driver);
+    }
+
     public void usernameIsDisplayed() {
         log.info("Поле \"Логин\" видимо");
         assertTrue(driver.findElement(usernameBy).isDisplayed(), "Поле \"Логин\" отсутствует");
@@ -92,6 +100,20 @@ public class LoginPage {
         String hatHomePage = "Вход в систему";
         String actualHatHomePage = driver.findElement(new By.ByXPath("//b[text()='Вход в систему']")).getText();
         assertEquals(hatHomePage, actualHatHomePage);
+    }
+
+    public void invalidPasswordMessage() {
+        log.info("Появилось сообщение об ошибке \"Invalid password\"");
+        String expectedErrorMessage = "Invalid password";
+        String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Invalid password']")).getText();
+        assertEquals(expectedErrorMessage, actualErrorMessage);
+    }
+
+    public void userDoesNotExistMessage() {
+        log.info("Появилось сообщение об ошибке \"Specified user does not exist\"");
+        String expectedErrorMessage = "Specified user does not exist";
+        String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Specified user does not exist']")).getText();
+        assertEquals(expectedErrorMessage, actualErrorMessage);
     }
 
     private boolean isAttributePresent(WebElement element, String attribute) {
