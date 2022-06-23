@@ -3,16 +3,13 @@ package com.github.PycJIaH.Components.WebInterface;
 import com.github.PycJIaH.Components.WebInterface.Pages.LoginPage;
 import com.github.PycJIaH.Components.WebInterface.Pages.MainPage;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 public class Authorization {
 

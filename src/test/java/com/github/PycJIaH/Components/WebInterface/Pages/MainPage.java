@@ -2,6 +2,7 @@ package com.github.PycJIaH.Components.WebInterface.Pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,12 @@ public class MainPage {
 
     //Локатор кнопки "admin - Выход"
     private By adminExitButtonBy = new By.ByXPath("//*[@id=\"navbarSupportedContent\"]//a[normalize-space()='admin - Выход']");
+
+    // Локатор раздела "Администрирование"
+    private By administrationBy = new By.ByXPath("//a[normalize-space()='Администрирование']");
+
+    // Локатор вкладки "Роли"
+    private By rolesBy = new By.ByXPath("//a[text()='Роли']");
 
     public MainPage(WebDriver driver) {
         this.driver = driver;
@@ -61,6 +68,14 @@ public class MainPage {
     public void clickAdminExitButton() {
         log.info("Нажать на пункт меню \"admin - Выход\"");
         driver.findElement(adminExitButtonBy).click();
+    }
+
+    public RolesPage moveToAdministrationRoles() {
+    log.info("В главном меню перейти в раздел \"Администрирование -> Роли\"");
+    driver.findElement(administrationBy).click();
+    driver.findElement(rolesBy).click();
+
+    return new RolesPage(driver);
     }
 
 }

@@ -5,8 +5,11 @@ import org.apache.log4j.chainsaw.Main;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,6 +117,13 @@ public class LoginPage {
         String expectedErrorMessage = "Specified user does not exist";
         String actualErrorMessage = driver.findElement(new By.ByXPath("//li[text()='Specified user does not exist']")).getText();
         assertEquals(expectedErrorMessage, actualErrorMessage);
+    }
+
+    public void permanentAuthorization() {
+        load();
+        setUsername("admin");
+        setPassword("admin");
+        clickSubmitNewPage();
     }
 
     private boolean isAttributePresent(WebElement element, String attribute) {
