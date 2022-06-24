@@ -34,16 +34,23 @@ public class RolesPage {
         assertThat("В списке отображается больше 1 строки со значением \"admin\"", expectedCountList, is(actualCountList));
     }
 
-    public ModalWindow createButtonClick() {
+    public ModalWindowRoles createButtonClick() {
         log.info("Нажать на вкладку \"Создать\"");
         driver.findElement(createButtonBy).click();
 
-        return new ModalWindow(driver);
+        return new ModalWindowRoles(driver);
     }
 
     public void createdRoleIsDisplayed(String value) {
-        log.info("В таблице \"Список\" отображается строка со значением \"tester_2\" в столбце \"Название роли\"");
+        log.info("В таблице \"Список\" отображается строка со значением " + value + " в столбце \"Название роли\"");
         assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + value + "']")).isDisplayed(), "Строка со значением " + value + " отсутствует");
+    }
+
+    public WebElement getRoleCell(String value) {
+        log.debug("В таблице \"Список\" ищется строка со значением " + value + " в столбце \"Название роли\"");
+        WebElement createdRoleCell = driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + value + "']"));
+
+        return createdRoleCell;
     }
 
     public void createRole(String testerName) {
@@ -51,15 +58,22 @@ public class RolesPage {
         MainPage mp = new MainPage(driver);
         lp.permanentAuthorization();
         mp.moveToAdministrationRoles();
-        ModalWindow mw = createButtonClick();
-        mw.nameRoleFieldSendKeys(testerName);
-        mw.saveButtonClick();
+        ModalWindowRoles mwr = createButtonClick();
+        mwr.nameRoleFieldSendKeys(testerName);
+        mwr.saveButtonClick();
         createdRoleIsDisplayed(testerName);
     }
 
     public void deleteUserRoleButtonClick(String testerNameDelete) {
-        log.info("Нажать на иконку \"Удалить запись\" роли с названием \"tester_3\"");
+        log.info("Нажать на иконку \"Удалить запись\" роли с названием " + testerNameDelete + "");
         driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerNameDelete + "']/..//button[@title='Delete record']")).click();
+    }
+
+    public ModalWindowRoles editUserButtonClick(String editableUser) {
+        log.info("Нажать на иконку \"Редактировать запись\" роли с названием " + editableUser + "");
+        driver.findElement(new By.ByXPath("//td[normalize-space()='" + editableUser + "']/..//a[@title='Редактировать запись']")).click();
+
+        return new ModalWindowRoles(driver);
     }
 
     public void confirmDeleteClick() {
@@ -69,9 +83,9 @@ public class RolesPage {
         ConfirmDelete.accept();
     }
 
-    public void isElementExistsRoleNameRemoved (String RoleNameRemoved){
-    log.info("В таблице \"Список\" отсутствует строка со значением \"tester_3\" в столбце \"Название роли\"");
-    assertFalse(isElementExists(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + RoleNameRemoved + "']"))), "Пользователь не удален");
+    public void isRoleNameRemoved(WebElement roleCell) {
+        log.info("В таблице \"Список\" отсутствует строка с удалённым пользователем в столбце \"Название роли\"");
+        assertFalse(isElementExists(roleCell), "Пользователь не удален");
     }
 
     private boolean isElementExists(WebElement el1) {

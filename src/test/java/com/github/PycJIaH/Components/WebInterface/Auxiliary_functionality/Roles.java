@@ -1,9 +1,6 @@
 package com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality;
 
-import com.github.PycJIaH.Components.WebInterface.Pages.LoginPage;
-import com.github.PycJIaH.Components.WebInterface.Pages.MainPage;
-import com.github.PycJIaH.Components.WebInterface.Pages.ModalWindow;
-import com.github.PycJIaH.Components.WebInterface.Pages.RolesPage;
+import com.github.PycJIaH.Components.WebInterface.Pages.*;
 import com.google.common.cache.AbstractCache;
 import com.google.common.cache.Cache;
 import dev.failsafe.internal.util.Assert;
@@ -59,19 +56,19 @@ public class Roles {
     public void createRoleTest() {
         LoginPage lp = new LoginPage(driver);
         MainPage mp = new MainPage(driver);
+
         lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
-        ModalWindow mw = rp.createButtonClick();
-        mw.agentFieldClick();
-        mw.dropDownElementClick();
-        mw.usersFieldClick();
-        mw.adminChoiceClick();
+        ModalWindowRoles mwr = rp.createButtonClick();
+        mwr.agentFieldClick();
+        mwr.dropDownElementClick();
+        mwr.usersFieldClick();
+        mwr.adminChoiceClick();
         String testerName = ("tester_" + new Random().ints(0, 100).findFirst().getAsInt());
-        mw.nameRoleFieldSendKeys(testerName);
-        mw.descriptionFieldSendKeys("Тестирует систему");
-        mw.saveButtonClick();
+        mwr.nameRoleFieldSendKeys(testerName);
+        mwr.descriptionFieldSendKeys("Тестирует систему");
+        mwr.saveButtonClick();
         rp.createdRoleIsDisplayed(testerName);
-
     }
 
     @Test
@@ -81,44 +78,28 @@ public class Roles {
 
         String testerName = "tester_" + new Random().ints(101, 200).findFirst().getAsInt();
         rp.createRole(testerName);
+        WebElement roleCell =  rp.getRoleCell(testerName);
         rp.deleteUserRoleButtonClick(testerName);
         rp.confirmDeleteClick();
-        rp.isElementExistsRoleNameRemoved(testerName);
+        rp.isRoleNameRemoved(roleCell);
 
     }
 
-//    @Test
-//    @DisplayName("4. Изменение роли, изменение поля Имя роли")
-//    public void editNameCreatedRole() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            log.info("2. Создать роль \"tester_3\"");
-//            String testerName = "tester_" + new Random().ints(201, 300).findFirst().getAsInt();
-//            String editedTesterName = "tester_" + new Random().ints(301, 400).findFirst().getAsInt();
-//            createRole(testerName);
-//            //Локатор кнопки "Редактировать запись"
-//            WebElement editUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']/..//a[@title='Редактировать запись']"));
-//            log.info("3. Нажать на иконку \"Редактировать запись\" роли с названием \"tester_4_1\"");
-//            editUserButton.click();
-//            //Локатор поля "Название роли"
-//            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
-//            //Локатор кнопки "Сохранить"
-//            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
-//            log.info("4. Ввести в поле \"Название роли\" значение \"tester_4_2\"");
-//            nameRoleField.clear();
-//            nameRoleField.sendKeys(editedTesterName);
-//            log.info("5. Нажать на кнопку \"Сохранить\"");
-//            saveButton.click();
-//            log.info("6. В таблице \"Список\" отображается строка со значением \"tester_4_2\" в столбце \"Название роли\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedTesterName + "']")).isDisplayed(), "Отсутствует изменённый пользователь в списке");
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
+    @Test
+    @DisplayName("4. Изменение роли, изменение поля Имя роли")
+    public void editNameCreatedRole() {
+        RolesPage rp = new RolesPage(driver);
+
+        String testerName = "tester_" + new Random().ints(201, 300).findFirst().getAsInt();
+        String editedTesterName = "tester_" + new Random().ints(301, 400).findFirst().getAsInt();
+        rp.createRole(testerName);
+        ModalWindowRoles mwr = rp.editUserButtonClick(testerName);
+        mwr.nameRoleFieldSendKeys(editedTesterName);
+        mwr.saveButtonClick();
+        rp.createdRoleIsDisplayed(editedTesterName);
+
+    }
+
 //    @Test
 //    @DisplayName("5. Изменение роли, изменение поля Описание")
 //    public void editDescriptionCreatedRole() {

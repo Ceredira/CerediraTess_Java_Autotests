@@ -45,7 +45,7 @@ public class LoginPage {
     }
 
     public void setPassword(String password) {
-        log.info("В поле \"Логин\" вводим значение \"" + password + "\"");
+        log.info("В поле \"Пароль\" вводим значение \"" + password + "\"");
         driver.findElement(passwordBy).sendKeys(password);
     }
 
