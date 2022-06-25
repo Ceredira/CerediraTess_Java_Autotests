@@ -142,52 +142,25 @@ public class Roles {
 
     }
 
-//    @Test
-//    @DisplayName("8. Дублирование записи роли, позитивный сценарий (2 способ)")
-//    public void duplicateRoleEntrySecondWay() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            //Локатор раздела "Администрирование":
-//            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-//            //Локатор вкладки "Роли":
-//            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
-//            log.info("2. В главном меню перейти в раздел \"Администрирование -> Роли\"");
-//            administration.click();
-//            roles.click();
-//            //Локатор кнопки "Дублировать запись"
-//            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
-//            log.info("3.Нажать на иконку \"Дублировать запись\" роли с названием \"admin\"");
-//            duplicateRowButton.click();
-//            //Локатор поля "Название роли"
-//            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
-//            //Локатор кнопки "Сохранить и добавить новый объект"
-//            WebElement saveAndAddButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить и добавить новый объект']"));
-//            log.info("4. Ввести в поле \"Название роли\" значение \"admin_7\"");
-//            String adminName = "admin_" + new Random().ints(101, 200).findFirst().getAsInt();
-//            nameRoleField.clear();
-//            nameRoleField.sendKeys(adminName);
-//            log.info("5. Нажать на кнопку \"Сохранить и добавить новый объект\"");
-//            saveAndAddButton.click();
-//            log.info("6. Текущая страница ${url}:7801/admin/Role/duplicate/?id=${id дублируемой роли}");
-//            assertTrue(driver.getCurrentUrl().matches("https?:\\/\\/.*:7801\\/admin\\/Role\\/duplicate\\/\\?id=\\d+"));
-//            log.info("7. В строке \"Название роли\" осталось прежнее название \"admin\"");
-//            String expectedNameRoleField = "admin";
-//            String actualNameRoleField = driver.findElement(new By.ByXPath("//input[@value='admin']")).getAttribute("value");
-//            assertEquals(expectedNameRoleField, actualNameRoleField);
-//            //Локатор вкладки "Список"
-//            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
-//            log.info("8. Перейти во вкладку \"Список\"");
-//            listRole.click();
-//            log.info("9. В таблице \"Список\" отображается строка со значением \"admin_8\" в столбце \"Название роли\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + adminName + "']")).isDisplayed());
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
+    @Test
+    @DisplayName("8. Дублирование записи роли, позитивный сценарий (2 способ)")
+    public void duplicateRoleEntrySecondWay() {
+        LoginPage lp = new LoginPage(driver);
+        MainPage mp = new MainPage(driver);
+
+        String adminName = "admin_" + new Random().ints(101, 200).findFirst().getAsInt();
+        lp.permanentAuthorization();
+        RolesPage rp = mp.moveToAdministrationRoles();
+        ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
+        mwdr.nameRoleFieldSendKeys(adminName);
+        mwdr.saveAndAddButtonClick();
+        mwdr.currentUrlModal();
+        mwdr.currentNameRoleIsDisplayed("admin");
+        mwdr.listRoleClick();
+        rp.createdRoleIsDisplayed(adminName);
+
+    }
+
 //    @Test
 //    @DisplayName("9. Дублирование записи роли, позитивный сценарий (3 способ)")
 //    public void duplicateRoleEntryThirdWay() {
