@@ -1,6 +1,5 @@
-package com.github.PycJIaH.Components.WebInterface.Pages;
+package com.github.PycJIaH.Components.WebInterface.Pages.ModalWindows;
 
-import com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality.Roles;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -8,13 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class ModalWindow {
+public abstract class ModalWindowCreate {
 
     protected WebDriver driver;
 
-    final Logger log = LoggerFactory.getLogger(ModalWindow.class);
+    final Logger log = LoggerFactory.getLogger(ModalWindowCreate.class);
 
-    public ModalWindow(WebDriver driver) {
+    public ModalWindowCreate(WebDriver driver) {
         this.driver = driver;
     }
 

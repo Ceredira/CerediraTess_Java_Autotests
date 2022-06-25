@@ -1,22 +1,18 @@
 package com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality;
 
 import com.github.PycJIaH.Components.WebInterface.Pages.*;
-import com.google.common.cache.AbstractCache;
-import com.google.common.cache.Cache;
-import dev.failsafe.internal.util.Assert;
+import com.github.PycJIaH.Components.WebInterface.Pages.ModalWindows.ModalWindowCreateRoles;
+import com.github.PycJIaH.Components.WebInterface.Pages.ModalWindows.ModalWindowDuplicateRoles;
+import com.github.PycJIaH.Components.WebInterface.Pages.ModalWindows.ModalWindowEditRoles;
+import com.github.PycJIaH.Components.WebInterface.Pages.ModalWindows.ModalWindowsViewRoles;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.WatchEvent;
 import java.time.Duration;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,15 +55,15 @@ public class Roles {
 
         lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
-        ModalWindowRoles mwr = rp.createButtonClick();
-        mwr.agentFieldClick();
-        mwr.dropDownElementClick();
-        mwr.usersFieldClick();
-        mwr.adminChoiceClick();
+        ModalWindowCreateRoles mwcr = rp.createButtonClick();
+        mwcr.agentFieldClick();
+        mwcr.dropDownElementClick();
+        mwcr.usersFieldClick();
+        mwcr.adminChoiceClick();
         String testerName = ("tester_" + new Random().ints(0, 100).findFirst().getAsInt());
-        mwr.nameRoleFieldSendKeys(testerName);
-        mwr.descriptionFieldSendKeys("Тестирует систему");
-        mwr.saveButtonClick();
+        mwcr.nameRoleFieldSendKeys(testerName);
+        mwcr.descriptionFieldSendKeys("Тестирует систему");
+        mwcr.saveButtonClick();
         rp.createdRoleIsDisplayed(testerName);
     }
 
@@ -78,10 +74,10 @@ public class Roles {
 
         String testerName = "tester_" + new Random().ints(101, 200).findFirst().getAsInt();
         rp.createRole(testerName);
-        WebElement roleCell =  rp.getRoleCell(testerName);
+        WebElement roleCell = rp.getRoleCell(testerName);
         rp.deleteUserRoleButtonClick(testerName);
         rp.confirmDeleteClick();
-        rp.isRoleNameRemoved(roleCell);
+        rp.isRoleNameRemoved(roleCell, testerName);
 
     }
 
@@ -93,123 +89,59 @@ public class Roles {
         String testerName = "tester_" + new Random().ints(201, 300).findFirst().getAsInt();
         String editedTesterName = "tester_" + new Random().ints(301, 400).findFirst().getAsInt();
         rp.createRole(testerName);
-        ModalWindowRoles mwr = rp.editUserButtonClick(testerName);
-        mwr.nameRoleFieldSendKeys(editedTesterName);
-        mwr.saveButtonClick();
+        ModalWindowEditRoles mwer = rp.editUserButtonClick(testerName);
+        mwer.nameRoleFieldSendKeys(editedTesterName);
+        mwer.saveButtonClick();
         rp.createdRoleIsDisplayed(editedTesterName);
 
     }
 
-//    @Test
-//    @DisplayName("5. Изменение роли, изменение поля Описание")
-//    public void editDescriptionCreatedRole() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            log.info("2. Создать роль \"tester_3\"");
-//            String testerName = "tester_" + new Random().ints(401, 500).findFirst().getAsInt();
-//            String editedDescription = "Описание роли" + new Random().ints(301, 400).findFirst().getAsInt();
-//            createRole(testerName);
-//            //Локатор кнопки "Редактировать запись"
-//            WebElement editUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']/..//a[@title='Редактировать запись']"));
-//            log.info("3. Нажать на иконку \"Редактировать запись\" роли с названием \"tester_4_1\"");
-//            editUserButton.click();
-//            //Локатор поля "Описание"
-//            WebElement descriptionField = driver.findElement(new By.ByXPath("//*[@id=\"description\"]"));
-//            //Локатор кнопки "Сохранить"
-//            WebElement saveButton = driver.findElement(new By.ByXPath("//*[@id=\"fa_modal_window\"]/..//input[@value='Сохранить']"));
-//            log.info("4. Ввести в поле \"Описание\" значение \"Описание роли\"");
-//            descriptionField.clear();
-//            descriptionField.sendKeys(editedDescription);
-//            log.info("5. Нажать на кнопку \"Сохранить\"");
-//            saveButton.click();
-//            log.info("6. В таблице \"Список\" отображается строка со значением \"tester_4_2\" в столбце \"Название роли\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//td[normalize-space()='" + editedDescription + "']")).isDisplayed(), "Отсутствует изменённое описание роли в списке");
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("6. Просмотр роли")
-//    public void checkViewRoleAdmin() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            //Локатор раздела "Администрирование":
-//            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-//            //Локатор вкладки "Роли":
-//            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
-//            log.info("2. В главном меню перейти в раздел \"Администрирование -> Роли\"");
-//            administration.click();
-//            roles.click();
-//            //Локатор кнопки "Просмотр записи"
-//            WebElement ViewUserButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Просмотр записи']"));
-//            log.info("3. Нажать на иконку \"Просмотр записи\" пользователя с логином \"admin\"");
-//            ViewUserButton.click();
-//            // Ждем появления формы
-//            WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(5));
-//            wait1.until(webDriver -> driver.findElement(new By.ByXPath("//h3[contains(text(), 'Просмотр записи')]")).isDisplayed());
-//            //Локатор значения поля "Название роли":
-//            WebElement roleNameValue = driver.findElement(new By.ByXPath("//table//b[text()='Название роли']/../../td[2]"));
-//            //Локатор значения поля "Описание":
-//            WebElement descriptionValue = driver.findElement(new By.ByXPath("//table//b[text()='Описание']/../../td[2]"));
-//            log.info("4. В поле \"Название роли\" присутствует значение \"admin\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Название роли']")).isDisplayed(), "Поле \"Название роли\" отсутствует");
-//            assertTrue(roleNameValue.isDisplayed(), "Значение поля \"Название роли\" отсутствует");
-//            String expectedRoleNameValue = "admin";
-//            String actualRoleNameValue = roleNameValue.getText();
-//            assertEquals(expectedRoleNameValue, actualRoleNameValue);
-//            log.info("5. В поле \"Описание\" отсутствует значение");
-//            assertTrue(driver.findElement(new By.ByXPath("//table//b[text()='Описание']")).isDisplayed(), "Поле \"Описание\" отсутствует");
-//            assertTrue(descriptionValue.getText().isEmpty(), "В поле \"Описание\" присутствует значение ");
-//            log.info("6. В поле \"Агенты\" присутствует значение \"CerediraTess\" - Поле отсутствует в данном релизе программы");
-//            log.info("7. В поле \"Пользователи\" присутствует значение \"admin\" - Поле отсутствует в данном релизе программы");
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("7. Дублирование записи роли, позитивный сценарий (1 способ)")
-//    public void duplicateRoleEntryFirstWay() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            //Локатор раздела "Администрирование":
-//            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-//            //Локатор вкладки "Роли":
-//            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
-//            log.info("2. В главном меню перейти в раздел \"Администрирование -> Роли\"");
-//            administration.click();
-//            roles.click();
-//            //Локатор кнопки "Дублировать запись"
-//            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
-//            log.info("3.Нажать на иконку \"Дублировать запись\" роли с названием \"admin\"");
-//            duplicateRowButton.click();
-//            //Локатор поля "Название роли"
-//            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
-//            //Локатор кнопки "Сохранить"
-//            WebElement saveButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить']"));
-//            log.info("4. Ввести в поле \"Название роли\" значение \"admin_7\"");
-//            String adminName = "admin_" + new Random().ints(1, 100).findFirst().getAsInt();
-//            nameRoleField.clear();
-//            nameRoleField.sendKeys(adminName);
-//            log.info("5. Нажать на кнопку \"Сохранить\"");
-//            saveButton.click();
-//            log.info("6. В таблице \"Список\" отображается строка со значением \"admin_7\" в столбце \"Название роли\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + adminName + "']")).isDisplayed());
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
+    @Test
+    @DisplayName("5. Изменение роли, изменение поля Описание")
+    public void editDescriptionCreatedRole() {
+        RolesPage rp = new RolesPage(driver);
+
+        String testerName = "tester_" + new Random().ints(401, 500).findFirst().getAsInt();
+        String editedDescription = "Описание роли_" + new Random().ints(301, 400).findFirst().getAsInt();
+        rp.createRole(testerName);
+        ModalWindowEditRoles mwer = rp.editUserButtonClick(testerName);
+        mwer.descriptionFieldSendKeys(editedDescription);
+        mwer.saveButtonClick();
+        rp.editedDescriptionIsDisplayed(editedDescription);
+    }
+
+    @Test
+    @DisplayName("6. Просмотр роли")
+    public void checkViewRoleAdmin() {
+        LoginPage lp = new LoginPage(driver);
+        MainPage mp = new MainPage(driver);
+
+        lp.permanentAuthorization();
+        RolesPage rp = mp.moveToAdministrationRoles();
+        ModalWindowsViewRoles mwvr = rp.ViewUserButtonClick("admin");
+        mwvr.roleNameIsDisplayed("admin");
+        mwvr.descriptionValueIsEmpty();
+        log.info("В поле \"Агенты\" присутствует значение \"CerediraTess\" - Поле отсутствует в данном релизе программы");
+        log.info("В поле \"Пользователи\" присутствует значение \"admin\" - Поле отсутствует в данном релизе программы");
+
+    }
+
+    @Test
+    @DisplayName("7. Дублирование записи роли, позитивный сценарий (1 способ)")
+    public void duplicateRoleEntryFirstWay() {
+        LoginPage lp = new LoginPage(driver);
+        MainPage mp = new MainPage(driver);
+
+        String adminName = "admin_" + new Random().ints(1, 100).findFirst().getAsInt();
+        lp.permanentAuthorization();
+        RolesPage rp = mp.moveToAdministrationRoles();
+        ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
+        mwdr.nameRoleFieldSendKeys(adminName);
+        mwdr.saveButtonClick();
+        rp.createdRoleIsDisplayed(adminName);
+
+    }
+
 //    @Test
 //    @DisplayName("8. Дублирование записи роли, позитивный сценарий (2 способ)")
 //    public void duplicateRoleEntrySecondWay() {
@@ -455,8 +387,6 @@ public class Roles {
 //        }
 //    }
 //
-
-
 
 
     @AfterEach

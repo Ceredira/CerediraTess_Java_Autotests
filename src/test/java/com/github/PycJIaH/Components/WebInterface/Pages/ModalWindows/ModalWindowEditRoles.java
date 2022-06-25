@@ -1,15 +1,19 @@
-package com.github.PycJIaH.Components.WebInterface.Pages;
+package com.github.PycJIaH.Components.WebInterface.Pages.ModalWindows;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModalWindowRoles extends ModalWindow {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    final Logger log = LoggerFactory.getLogger(ModalWindowRoles.class);
+public class ModalWindowEditRoles extends ModalWindowCreate {
 
-    public ModalWindowRoles(WebDriver driver) {
+    final Logger log = LoggerFactory.getLogger(ModalWindowEditRoles.class);
+
+    public ModalWindowEditRoles(WebDriver driver) {
         super(driver);
     }
 
@@ -30,6 +34,7 @@ public class ModalWindowRoles extends ModalWindow {
 
     //Локатор значения "admin" в поле Пользователи
     private By adminChoiceBy = new By.ByXPath("//*[contains(@id,\"select2-result-label-\") and text()='admin']");
+
 
     public void agentFieldClick() {
         log.info("В поле \"Агенты\"...");
@@ -58,7 +63,8 @@ public class ModalWindowRoles extends ModalWindow {
     }
 
     public void descriptionFieldSendKeys(String description) {
-        log.info("В поле \"Описание\" ввести значение \"Тестирует систему\"");
+        log.info("В поле \"Описание\" ввести значение " + description + "");
+        driver.findElement(descriptionFieldBy).clear();
         driver.findElement(descriptionFieldBy).sendKeys(description);
     }
 }
