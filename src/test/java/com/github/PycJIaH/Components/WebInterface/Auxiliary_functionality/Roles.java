@@ -154,57 +154,32 @@ public class Roles {
         ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
         mwdr.nameRoleFieldSendKeys(adminName);
         mwdr.saveAndAddButtonClick();
-        mwdr.currentUrlModal();
+        mwdr.currentUrlModal("url:7801/admin/Role/duplicate/?id=${id дублируемой роли}", "https?:\\/\\/.*:7801\\/admin\\/Role\\/duplicate\\/\\?id=\\d+");
         mwdr.currentNameRoleIsDisplayed("admin");
         mwdr.listRoleClick();
         rp.createdRoleIsDisplayed(adminName);
 
     }
 
-//    @Test
-//    @DisplayName("9. Дублирование записи роли, позитивный сценарий (3 способ)")
-//    public void duplicateRoleEntryThirdWay() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            //Локатор раздела "Администрирование":
-//            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-//            //Локатор вкладки "Роли":
-//            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
-//            log.info("2. В главном меню перейти в раздел \"Администрирование -> Роли\"");
-//            administration.click();
-//            roles.click();
-//            //Локатор кнопки "Дублировать запись"
-//            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
-//            log.info("3.Нажать на иконку \"Дублировать запись\" роли с названием \"admin\"");
-//            duplicateRowButton.click();
-//            //Локатор поля "Название роли"
-//            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
-//            //Локатор кнопки "Сохранить и добавить новый объект"
-//            WebElement saveAndContinueEditingButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить и продолжить редактирование']"));
-//            log.info("4. Ввести в поле \"Название роли\" значение \"admin_9\"");
-//            String adminName = "admin_" + new Random().ints(201, 300).findFirst().getAsInt();
-//            nameRoleField.clear();
-//            nameRoleField.sendKeys(adminName);
-//            log.info("5. Нажать на кнопку \"Сохранить и продолжить редактирование\"");
-//            saveAndContinueEditingButton.click();
-//            log.info("6. Текущая страница ${url}:7801/admin/Role/duplicate/?id=${id дублируемой роли}");
-//            assertTrue(driver.getCurrentUrl().matches("https?:\\/\\/.*:7801\\/admin\\/Role\\/edit\\/\\?id=\\d+&url=.*"));
-//            log.info("7. В строке \"Название роли\" осталось прежнее название \"admin\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//input[@value='" + adminName + "']")).isDisplayed());
-//            //Локатор вкладки "Список"
-//            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
-//            log.info("8. Перейти во вкладку \"Список\"");
-//            listRole.click();
-//            log.info("9. В таблице \"Список\" отображается строка со значением \"admin_8\" в столбце \"Название роли\"");
-//            assertTrue(driver.findElement(new By.ByXPath("//td[@class='col-name' and normalize-space()='" + adminName + "']")).isDisplayed());
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
+    @Test
+    @DisplayName("9. Дублирование записи роли, позитивный сценарий (3 способ)")
+    public void duplicateRoleEntryThirdWay() {
+        LoginPage lp = new LoginPage(driver);
+        MainPage mp = new MainPage(driver);
+
+        String adminName = "admin_" + new Random().ints(201, 300).findFirst().getAsInt();
+        lp.permanentAuthorization();
+        RolesPage rp = mp.moveToAdministrationRoles();
+        ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
+        mwdr.nameRoleFieldSendKeys(adminName);
+        mwdr.saveAndContinueEditingButtonClick();
+        mwdr.currentUrlModal("url:7801/admin/Role/duplicate/?id=${id дублируемой роли}", "https?:\\/\\/.*:7801\\/admin\\/Role\\/edit\\/\\?id=\\d+&url=.*");
+        mwdr.currentNameRoleIsDisplayed(adminName);
+        mwdr.listRoleClick();
+        rp.createdRoleIsDisplayed(adminName);
+
+    }
+
 //    @Test
 //    @DisplayName("10. Дублирование записи роли, негативный сценарий")
 //    public void duplicateRoleEntryNegativeWay() {

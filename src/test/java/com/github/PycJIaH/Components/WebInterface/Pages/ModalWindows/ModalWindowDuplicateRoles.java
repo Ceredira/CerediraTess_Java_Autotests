@@ -30,13 +30,13 @@ public class ModalWindowDuplicateRoles extends ModalWindowDuplicate {
         driver.findElement(nameRoleFieldBy).sendKeys(nameRoleFieldValue);
     }
 
-    public void currentUrlModal() {
-        log.info("Текущая страница ${url}:7801/admin/Role/duplicate/?id=${id дублируемой роли}");
-        assertTrue(driver.getCurrentUrl().matches("https?:\\/\\/.*:7801\\/admin\\/Role\\/duplicate\\/\\?id=\\d+"));
+    public void currentUrlModal(String urlValue, String regexUrlValue) {
+        log.info("Текущая страница " + urlValue + "");
+        assertTrue(driver.getCurrentUrl().matches(regexUrlValue));
     }
 
     public void currentNameRoleIsDisplayed(String currentNameRole) {
-        log.info("В строке \"Название роли\" осталось прежнее название " + currentNameRole + "");
+        log.info("В строке \"Название роли\" отображается название " + currentNameRole + "");
         String expectedNameRoleField = currentNameRole;
         String actualNameRoleField = driver.findElement(nameRoleFieldBy).getAttribute("value");
         assertThat("Не совпадает значение со значением " + currentNameRole + "", expectedNameRoleField, Matchers.is(actualNameRoleField));

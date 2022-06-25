@@ -23,8 +23,12 @@ public abstract class ModalWindowDuplicate {
     //Локатор кнопки "Сохранить и добавить новый объект"
     private By saveAndAddButtonBy = new By.ByXPath("//input[@value='Сохранить и добавить новый объект']");
 
+    //Локатор кнопки "Сохранить и добавить новый объект"
+    private By saveAndContinueEditingButtonBy = new By.ByXPath("//input[@value='Сохранить и продолжить редактирование']");
+
     //Локатор вкладки "Список"
     private By listRoleBy = new By.ByXPath("//a[text()='Список']");
+
 
     public void saveButtonClick() {
         log.info("Нажать на кнопку \"Сохранить\"");
@@ -35,6 +39,12 @@ public abstract class ModalWindowDuplicate {
         log.info("Нажать на кнопку \"Сохранить и добавить новый объект\"");
         driver.findElement(saveAndAddButtonBy).click();
     }
+
+    public void saveAndContinueEditingButtonClick() {
+        log.info("Нажать на кнопку \"Сохранить и продолжить редактирование\"");
+        driver.findElement(saveAndContinueEditingButtonBy).click();
+    }
+
 
     public void listRoleClick() {
         log.info("Перейти во вкладку \"Список\"");
