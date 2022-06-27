@@ -42,5 +42,11 @@ public class ModalWindowDuplicateRoles extends ModalWindowDuplicate {
         assertThat("Не совпадает значение со значением " + currentNameRole + "", expectedNameRoleField, Matchers.is(actualNameRoleField));
     }
 
+    //Локатор ошибки целостности
+    public void errorMessageIsDisplayed() {
+        log.info("Под главным меню появилось сообщение \"Ошибка целостности.\"");
+        assertTrue(driver.findElement(new By.ByXPath("//div[@class=\"alert alert-danger alert-dismissable\" and contains(string(), \"Ошибка целостности.\")]")).isDisplayed());
+    }
+
 
 }

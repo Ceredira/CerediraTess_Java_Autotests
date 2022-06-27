@@ -180,52 +180,23 @@ public class Roles {
 
     }
 
-//    @Test
-//    @DisplayName("10. Дублирование записи роли, негативный сценарий")
-//    public void duplicateRoleEntryNegativeWay() {
-//
-//        try {
-//            log.info("1.Войти на сайт с пользователем \"admin\"");
-//            permanentAuthorization();
-//            //Локатор раздела "Администрирование":
-//            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-//            //Локатор вкладки "Роли":
-//            WebElement roles = driver.findElement(new By.ByXPath("//a[text()='Роли']"));
-//            log.info("2. В главном меню перейти в раздел \"Администрирование -> Роли\"");
-//            administration.click();
-//            roles.click();
-//            //Локатор кнопки "Дублировать запись"
-//            WebElement duplicateRowButton = driver.findElement(new By.ByXPath("//td[normalize-space()='admin']/..//a[@title='Duplicate Row']"));
-//            log.info("3.Нажать на иконку \"Дублировать запись\" роли с названием \"admin\"");
-//            duplicateRowButton.click();
-//            //Локатор поля "Название роли"
-//            WebElement nameRoleField = driver.findElement(new By.ByXPath("//*[@id=\"name\"]"));
-//            //Локатор кнопки "Сохранить"
-//            WebElement saveButton = driver.findElement(new By.ByXPath("//input[@value='Сохранить']"));
-//            log.info("4. Ввести в поле \"Название роли\" значение \"admin\"");
-//            nameRoleField.clear();
-//            nameRoleField.sendKeys("admin");
-//            log.info("5. Нажать на кнопку \"Сохранить\"");
-//            saveButton.click();
-//            //Локатор ошибки целостности
-//            WebElement errorMessage = driver.findElement(new By.ByXPath("//div[@class=\"alert alert-danger alert-dismissable\" and contains(string(), \"Ошибка целостности.\")]"));
-//            log.info("6. Под главным меню появилось сообщение \"Ошибка целостности.\"");
-//            assertTrue(errorMessage.isDisplayed());
-//            //Локатор вкладки "Список"
-//            WebElement listRole = driver.findElement(new By.ByXPath("//a[text()='Список']"));
-//            log.info("7. Перейти во вкладку \"Список\"");
-//            listRole.click();
-//            log.info("8. В таблице \"Список\" содержится только 1 строка со значением \"admin\" в столбце \"Название роли\"");
-//            List<WebElement> countОfLines = driver.findElements(new By.ByXPath("//td[@class='col-name' and normalize-space()='admin']"));
-//            int expectedCountList = 1;
-//            int actualCountList = countОfLines.size();
-//            assertEquals(expectedCountList, actualCountList);
-//
-//        } finally {
-//            driver.quit();
-//        }
-//    }
-//
+    @Test
+    @DisplayName("10. Дублирование записи роли, негативный сценарий")
+    public void duplicateRoleEntryNegativeWay() {
+        LoginPage lp = new LoginPage(driver);
+        MainPage mp = new MainPage(driver);
+
+        String adminName = "admin_" + new Random().ints(201, 300).findFirst().getAsInt();
+        lp.permanentAuthorization();
+        RolesPage rp = mp.moveToAdministrationRoles();
+        ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
+        mwdr.nameRoleFieldSendKeys("admin");
+        mwdr.saveButtonClick();
+        mwdr.errorMessageIsDisplayed();
+        mwdr.listRoleClick();
+        rp.countOfLinesWithNameAdmin();
+    }
+
 //    @Test
 //    @DisplayName("11. Удаление записи роли admin, негативный сценарий")
 //    //ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ НЕ ЗАПУСКАТЬ, ВСЁ ЛОМАЕТ
