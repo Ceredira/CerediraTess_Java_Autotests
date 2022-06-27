@@ -34,6 +34,9 @@ public class MainPage {
     // Локатор вкладки "Роли"
     private By rolesBy = new By.ByXPath("//a[text()='Роли']");
 
+    //Локатор раздела "Пользователи":
+    private By usersBy = new By.ByXPath("//a[text()='Пользователи']");
+
     public MainPage(WebDriver driver) {
         this.driver = driver;
     }
@@ -76,6 +79,14 @@ public class MainPage {
     driver.findElement(rolesBy).click();
 
     return new RolesPage(driver);
+    }
+
+    public UsersPage moveToAdministrationUsers() {
+        log.info("В главном меню перейти в раздел \"Администрирование -> Пользователи\"");
+        driver.findElement(administrationBy).click();
+        driver.findElement(usersBy).click();
+
+        return new UsersPage(driver);
     }
 
 }

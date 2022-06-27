@@ -119,11 +119,13 @@ public class LoginPage {
         assertEquals(expectedErrorMessage, actualErrorMessage);
     }
 
-    public void permanentAuthorization() {
+    public MainPage permanentAuthorization() {
         load();
         setUsername("admin");
         setPassword("admin");
         clickSubmitNewPage();
+
+        return new MainPage(driver);
     }
 
     private boolean isAttributePresent(WebElement element, String attribute) {

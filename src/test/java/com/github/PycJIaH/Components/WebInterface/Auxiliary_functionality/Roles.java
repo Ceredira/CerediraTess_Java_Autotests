@@ -38,9 +38,8 @@ public class Roles {
     @DisplayName("1. Существование, при старте с нуля, роли по умолчанию \"admin\"")
     public void existenceCheckRoleAdmin() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         rp.countOfLinesWithNameAdmin();
 
@@ -51,9 +50,8 @@ public class Roles {
     @DisplayName("2. Создание роли")
     public void createRoleTest() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowCreateRoles mwcr = rp.createButtonClick();
         mwcr.agentFieldClick();
@@ -114,9 +112,8 @@ public class Roles {
     @DisplayName("6. Просмотр роли")
     public void checkViewRoleAdmin() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowsViewRoles mwvr = rp.ViewUserButtonClick("admin");
         mwvr.roleNameIsDisplayed("admin");
@@ -130,10 +127,9 @@ public class Roles {
     @DisplayName("7. Дублирование записи роли, позитивный сценарий (1 способ)")
     public void duplicateRoleEntryFirstWay() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
         String adminName = "admin_" + new Random().ints(1, 100).findFirst().getAsInt();
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
         mwdr.nameRoleFieldSendKeys(adminName);
@@ -146,10 +142,9 @@ public class Roles {
     @DisplayName("8. Дублирование записи роли, позитивный сценарий (2 способ)")
     public void duplicateRoleEntrySecondWay() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
         String adminName = "admin_" + new Random().ints(101, 200).findFirst().getAsInt();
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
         mwdr.nameRoleFieldSendKeys(adminName);
@@ -165,10 +160,9 @@ public class Roles {
     @DisplayName("9. Дублирование записи роли, позитивный сценарий (3 способ)")
     public void duplicateRoleEntryThirdWay() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
         String adminName = "admin_" + new Random().ints(201, 300).findFirst().getAsInt();
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
         mwdr.nameRoleFieldSendKeys(adminName);
@@ -184,9 +178,8 @@ public class Roles {
     @DisplayName("10. Дублирование записи роли, негативный сценарий")
     public void duplicateRoleEntryNegativeWay() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowDuplicateRoles mwdr = rp.duplicateRolesClick("admin");
         mwdr.nameRoleFieldSendKeys("admin");
@@ -201,9 +194,8 @@ public class Roles {
     //ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ НЕ ЗАПУСКАТЬ, ВСЁ ЛОМАЕТ
     public void DeletingRoleEntryAdminNegativeWay() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
 
-        lp.permanentAuthorization();
+        MainPage mp = lp.permanentAuthorization();
         RolesPage rp = mp.moveToAdministrationRoles();
         rp.deleteUserRoleButtonClick("admin");
         fail("ЭТОТ ТЕСТ В ДАННОМ РЕЛИЗЕ УДАЛЯЕТ УЧЁТНУЮ ЗАПИСЬ admin");
@@ -232,15 +224,13 @@ public class Roles {
     @DisplayName("13. Удаление записей ролей через выбор Все, негативный сценарий")
     public void removeAllCreatedRolesViaSelectedAllNegativeWay() {
         LoginPage lp = new LoginPage(driver);
-        MainPage mp = new MainPage(driver);
-        RolesPage rp = new RolesPage(driver);
 
         String testerName = "tester_" + new Random().ints(601, 700).findFirst().getAsInt();
         String testerName2 = "tester_" + new Random().ints(701, 800).findFirst().getAsInt();
         String testerName3 = "tester_" + new Random().ints(801, 900).findFirst().getAsInt();
 
-        lp.permanentAuthorization();
-        mp.moveToAdministrationRoles();
+        MainPage mp = lp.permanentAuthorization();
+        RolesPage rp = mp.moveToAdministrationRoles();
         ModalWindowCreateRoles mwr = rp.createButtonClick();
         mwr.nameRoleFieldSendKeys(testerName);
         mwr.saveButtonClick();

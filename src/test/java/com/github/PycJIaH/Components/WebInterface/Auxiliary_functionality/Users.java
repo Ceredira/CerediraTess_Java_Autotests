@@ -1,7 +1,9 @@
 package com.github.PycJIaH.Components.WebInterface.Auxiliary_functionality;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.github.PycJIaH.Components.WebInterface.Pages.LoginPage;
+import com.github.PycJIaH.Components.WebInterface.Pages.MainPage;
+import com.github.PycJIaH.Components.WebInterface.Pages.UsersPage;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -20,29 +22,27 @@ public class Users {
     final Logger log = LoggerFactory.getLogger(Users.class);
     WebDriver driver;
 
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver.exe");
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+    }
+
     @Test
     @DisplayName("1. Существование, при старте с нуля, пользователя по умолчанию admin.md")
     public void Existence_check_at_startup() {
+        LoginPage lp = new LoginPage(driver);
 
-        try {
-            log.info("1. Войти на сайт с пользователем \"admin\"");
-            permanentAuthorization();
-            //Локатор раздела "Администрирование":
-            WebElement administration = driver.findElement(new By.ByXPath("//a[normalize-space()='Администрирование']"));
-            //Локатор раздела "Пользователи":
-            WebElement users = driver.findElement(new By.ByXPath("//a[text()='Пользователи']"));
-            log.info("2. В главном меню перейти в раздел \"Администрирование -> Пользователи\"");
-            administration.click();
-            users.click();
-            log.info("3. В списке есть 1 запись, где \"Логин пользователя\" равен \"admin\"");
-            String expectedUserName = "admin";
-            String actualUserName = driver.findElement(new By.ByXPath("//td[@class='col-username' and normalize-space()='admin']")).getText();
-            assertEquals(expectedUserName, actualUserName);
+        MainPage mp = lp.permanentAuthorization();
+        UsersPage up = mp.moveToAdministrationUsers();
+        up.countOfLinesWithUsers("admin");
 
-
-        } finally {
-            driver.quit();
-        }
     }
 
     @Test
@@ -300,6 +300,19 @@ public class Users {
 
         } finally {
 
+        }
+    }
+
+    @AfterEach
+    public void afterEach() {
+        if (driver != null) {
+            try {
+                log.info("Закрытие браузера");
+                driver.close();
+                driver.quit();
+            } catch (Exception ex) {
+                log.error(ex.getMessage());
+            }
         }
     }
 
