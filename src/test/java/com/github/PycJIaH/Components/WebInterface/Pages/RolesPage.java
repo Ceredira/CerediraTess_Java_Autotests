@@ -28,6 +28,15 @@ public class RolesPage {
     //Локатор кнопки "Создать"
     private By createButtonBy = new By.ByXPath("//a[normalize-space()='Создать']");
 
+    //Локатор вкладки "С выбранным"
+    private By withSelectedBy = new By.ByXPath("//a[text()='С выбранным']");
+
+    //Локатор пункта меню "Удалить"
+    private By deleteUserButtonWithSelectedBy = new By.ByXPath("//a[text()='Удалить']");
+
+    //Локатор чекбокса в таблице пользователей+
+    private By  checkBoxAllTableBy = new By.ByXPath("//input[@type='checkbox']/..//input[@title='Выбрать все записи']");
+
 
     public void countOfLinesWithNameAdmin() {
         log.info("В таблице \"Список\" отображается 1 строка со значением \"admin\" в столбце \"Название роли\"");
@@ -96,7 +105,7 @@ public class RolesPage {
     }
 
     public ModalWindowDuplicateRoles duplicateRolesClick(String duplicateRole) {
-        log.info("Нажать на иконку \"Дублировать запись\" роли с названием \"admin\"");
+        log.info("Нажать на иконку \"Дублировать запись\" роли с названием " + duplicateRole + "");
         driver.findElement(new By.ByXPath("//td[normalize-space()='" + duplicateRole + "']/..//a[@title='Duplicate Row']")).click();
 
         return new ModalWindowDuplicateRoles(driver);
@@ -107,6 +116,26 @@ public class RolesPage {
         Alert ConfirmDelete = driver.switchTo().alert();
         log.info("Нажать на кнопку \"ОК\"");
         ConfirmDelete.accept();
+    }
+
+    public void checkBoxTableClick(String testerName) {
+        log.info("Нажать на чекбокс \"Выберите запись\" роли с названием " + testerName + "");
+        driver.findElement(new By.ByXPath("//td[normalize-space()='" + testerName + "']/..//input[@type='checkbox']")).click();
+    }
+
+    public void checkBoxAllTableClick() {
+        log.info("Нажать на чекбокс \"Выбрать все записи\"");
+        driver.findElement(checkBoxAllTableBy).click();
+    }
+
+    public void withSelectedClick() {
+        log.info("Перейти во вкладку \"С выбранным\"");
+        driver.findElement(withSelectedBy).click();
+    }
+
+    public void deleteUserButtonWithSelectedClick() {
+        log.info("Выбрать пункт из меню \"Удалить\"");
+        driver.findElement(deleteUserButtonWithSelectedBy).click();
     }
 
     public void isRoleNameRemoved(WebElement roleCell, String username) {
